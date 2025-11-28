@@ -1,0 +1,31 @@
+.weekday {
+  width: 80%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.cal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  width: 80%;
+  border: 1px solid #000;
+  padding: 10px;
+  max-width: 740px;
+}
+
+.cal div {
+  border: 1px solid var(--backgroundDark);
+  width: 100px;
+  height: 100px;
+  padding: 4px;
+  background-color: var(--inputBackground);
+}
+
+.cal div.current {
+  background-color: var(--buttonSecondary);
+  color: var(--textPrimary);
+  text-decoration: underline;
+}
