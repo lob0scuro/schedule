@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 const RootLayout = () => {
   return (
     <>
-      <header>Schedules</header>
+      <header>SCHEDULER</header>
       <main>
         <Outlet />
       </main>
