@@ -1,3 +1,9 @@
+.calendarMasterBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .calendarHeader {
   display: flex;
   align-items: center;
@@ -12,9 +18,19 @@
   border-radius: 4px;
 }
 
-.weekday {
+.calContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 80%;
+  max-width: 740px;
+  min-width: 730px;
+}
+
+.weekday {
+  width: 100%;
   max-width: 750px;
+  min-width: 730px;
   display: flex;
   justify-content: space-evenly;
   font-size: 12px;
@@ -26,10 +42,10 @@
   align-items: center;
   justify-content: flex-start;
   gap: 2px;
-  width: 80%;
-  /* border: 1px solid #000; */
+  width: 100%;
   padding: 10px;
   max-width: 740px;
+  min-width: 740px;
 }
 
 .cal div {

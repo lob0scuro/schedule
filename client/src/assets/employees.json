@@ -1,0 +1,167 @@
+{
+  "owner": [
+    {
+      "name": "Matthew Guillory",
+      "email": "mattg@mattsappliancesla.net",
+      "phone_number": "3372747877"
+    },
+    {
+      "name": "Amber Guillory",
+      "email": "ambernicole@mattsappliancesla.net",
+      "phone_number": "3374290062"
+    }
+  ],
+  "other": [
+    {
+      "name": "Jesse O'Neill",
+      "email": "jesse@mattsappliancesla.net",
+      "phone_number": "3375156767"
+    },
+    {
+      "name": "Cameron Lopez",
+      "email": "cameron@mattsappliancesla.net",
+      "phone_number": "3372630646"
+    }
+  ],
+  "sales": [
+    {
+      "name": "Anthony Lubin",
+      "email": "adlcansing@gmail.com",
+      "phone_number": "3377645383"
+    },
+    {
+      "name": "Jerry Ames",
+      "email": "jerrya37@gmail.com",
+      "phone_number": "3372495132"
+    },
+    {
+      "name": "Brandon Carona",
+      "email": "write2bcarona@gmail.com",
+      "phone_number": "3375154281"
+    },
+    {
+      "name": "Na'Coby Hayes",
+      "email": "zanzibarhughes@gmail.com",
+      "phone_number": "3374271187"
+    },
+    {
+      "name": "Andrew Domingues",
+      "email": "andrewdomingues0524@gmail.com",
+      "phone_number": "3374868248"
+    }
+  ],
+  "service": [
+    {
+      "name": "Chase Warden",
+      "email": "chasew@mattsappliancesla.net",
+      "phone_number": "3372870939"
+    },
+    {
+      "name": "Irving Bush",
+      "email": "ibush1288@gmail.com",
+      "phone_number": "3372748454"
+    },
+    {
+      "name": "Christopher Pace",
+      "email": "christopherpace57@gmail.com",
+      "phone_number": "3375088151"
+    },
+    {
+      "name": "Clayton Wallace",
+      "email": "clw7021@gmail.com",
+      "phone_number": "3373701709"
+    }
+  ],
+  "technician": {
+    "fridges": [
+      {
+        "name": "Chevis Edwards",
+        "email": "chevise@live.com",
+        "phone_number": "3379364701"
+      },
+      {
+        "name": "Jeremy Owens",
+        "email": "owensjeremy176@gmail.com",
+        "phone_number": "3375324511"
+      },
+      {
+        "name": "Zachary Eccles",
+        "email": "zachary@performancemvp.com",
+        "phone_number": "3373094059"
+      }
+    ],
+    "washers": [
+      {
+        "name": "Terrain Lemons",
+        "email": "terrainlemons30@gmail.com",
+        "phone_number": "3376604960"
+      },
+      {
+        "name": "Martell Armelin",
+        "email": "xmya77728@gmail.com",
+        "phone_number": "3372444295"
+      },
+      {
+        "name": "Khalil Watts",
+        "email": "wattsk554@gmail.com",
+        "phone_number": "3372443591"
+      }
+    ],
+    "dryers-ranges": [
+      {
+        "name": "Donovan Boutte",
+        "email": "dboutte778@gmail.com",
+        "phone_number": "3378424350"
+      },
+      {
+        "name": "Randal Carter",
+        "email": "rkcarter84@gmail.com",
+        "phone_number": "3375401637"
+      }
+    ]
+  },
+  "cleaner": [
+    {
+      "name": "John Baggett",
+      "email": "johnbagget27@gmail.com",
+      "phone_number": "3377301976"
+    },
+    {
+      "name": "Tommy Rubin",
+      "email": "tommyrubin46@gmail.com",
+      "phone_number": "3377078064"
+    },
+    {
+      "name": "Steve Galtney",
+      "email": "streetz4up@gmail.com",
+      "phone_number": "3378844729"
+    },
+    {
+      "name": "Blake Chaisson",
+      "email": "adambuddy2@gmail.com",
+      "phone_number": "3376517743"
+    },
+    {
+      "name": "Isaiah Blakely",
+      "email": "isaiahb98@icloud.com",
+      "phone_number": "3375154189"
+    }
+  ],
+  "driver": [
+    {
+      "name": "Blaze Richard",
+      "email": "bgrichard97@gmail.com",
+      "phone_number": "3372446043"
+    },
+    {
+      "name": "Damon Williams",
+      "email": "damonjwilliams9718@gmail.com",
+      "phone_number": "3377072008"
+    },
+    {
+      "name": "Da'Von Butler",
+      "email": "sackstederjada789@gmail.com",
+      "phone_number": "3374852068"
+    }
+  ]
+}

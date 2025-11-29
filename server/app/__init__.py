@@ -24,8 +24,8 @@ def create_app(config_class=Config):
     
 
     # Register blueprints here
-    from app.api import api_bp
-    app.register_blueprint(api_bp)
+    from app.api import api
+    app.register_blueprint(api)
     
     @app.route("/uploads/<path:filename>", methods=["GET"])
     def uploaded_file(filename):
