@@ -78,36 +78,6 @@ export const changeMonth = (
   });
 };
 
-export const buildWorkWeeks = (year, month) => {
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const weeks = [];
-  let week = [];
-
-  for (let i = 0; i < firstDay; i++) {
-    week.push(null);
-  }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    week.push(new Date(year, month, day));
-
-    if (week.length === 7) {
-      weeks.push(week);
-      week = [];
-    }
-  }
-
-  if (week.length > 0) {
-    while (week.length < 7) {
-      week.push(null);
-    }
-    weeks.push(week);
-  }
-
-  return weeks;
-};
-
 export const CLEANERS = EMPLOYEES.cleaner;
 export const FRIDGE_TECHS = EMPLOYEES.technician.fridges;
 export const WASHER_TECHS = EMPLOYEES.technician.washers;
@@ -115,3 +85,27 @@ export const DRYER_RANGE_TECHS = EMPLOYEES.technician["dryers-ranges"];
 export const SALES = EMPLOYEES.sales;
 export const SERVICE = EMPLOYEES.service;
 export const OFFICE = EMPLOYEES.other;
+
+export const getWorkWeekFromDate = (date) => {
+  let d = new Date(date);
+
+  // Sunday ? treat it as next day (monday)
+  if (d.getDay() === 0) {
+    d.setDate(d.getDate() + 1);
+  }
+
+  const dayOfWeek = d.getDate();
+  const monday = new Date(d);
+
+  //move back to monday
+  monday.setDate(d.getDate() - (dayOfWeek - 1));
+
+  const week = [];
+  for (let i = 0; i < 6; i++) {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + i);
+    week.push(day);
+  }
+
+  return week;
+};

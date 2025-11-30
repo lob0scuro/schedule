@@ -1,11 +1,9 @@
 import styles from "./Scheduler.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   WEEKDAY,
   MONTH_NAMES,
-  getCalendarDays,
-  changeMonth,
-  buildWorkWeeks,
+  getWorkWeekFromDate,
   CLEANERS,
   DRYER_RANGE_TECHS,
   FRIDGE_TECHS,
@@ -13,7 +11,14 @@ import {
   SALES,
   SERVICE,
   WASHER_TECHS,
+  suffix,
 } from "../../utils/Helpers";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquarePlus, faUser } from "@fortawesome/free-regular-svg-icons";
+import {
+  faBackwardStep,
+  faForwardStep,
+} from "@fortawesome/free-solid-svg-icons";
 
 const EMPLOYEES = {
   cleaners: CLEANERS,
@@ -23,60 +28,90 @@ const EMPLOYEES = {
   washer_techs: WASHER_TECHS,
   fridge_techs: FRIDGE_TECHS,
   dryer_range_techs: DRYER_RANGE_TECHS,
+  all: [
+    ...CLEANERS,
+    ...OFFICE,
+    ...SALES,
+    ...SERVICE,
+    ...WASHER_TECHS,
+    ...FRIDGE_TECHS,
+    ...DRYER_RANGE_TECHS,
+  ],
 };
 
 const Scheduler = () => {
   const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [currentDay, setCurrentDay] = useState(today.getDate());
-  const [chosenTeam, setChosenTeam] = useState(null);
-  const weeks = buildWorkWeeks(currentYear, currentMonth);
-  const [currentWeek, setCurrentWeek] = useState();
+  const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
+  const [chosenTeam, setChosenTeam] = useState("all");
 
-  useEffect(() => {
-    const currentWeekIndex = weeks.find((week) =>
-      week.some(
-        (day) =>
-          day &&
-          day.getFullYear() === today.getFullYear() &&
-          day.getMonth() === today.getMonth() &&
-          day.getDate() === today.getDate()
-      )
-    );
+  // Helper: Build Mon-Sat week from a Monday
+  const buildWeekFromMonday = (monday) => {
+    const week = [];
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      week.push(d);
+    }
+    return week;
+  };
 
-    setCurrentWeek(currentWeekIndex);
-  }, [currentMonth, currentYear]);
+  // Prev / Next / Today handlers
+  const goPrev = () => {
+    const prevMonday = new Date(currentWeek[0]);
+    prevMonday.setDate(prevMonday.getDate() - 7);
+    setCurrentWeek(buildWeekFromMonday(prevMonday));
+  };
 
-  console.log(currentWeek);
+  const goNext = () => {
+    const nextMonday = new Date(currentWeek[0]);
+    nextMonday.setDate(nextMonday.getDate() + 7);
+    setCurrentWeek(buildWeekFromMonday(nextMonday));
+  };
+
+  const goToday = () => {
+    setCurrentWeek(getWorkWeekFromDate(today));
+  };
+
+  // Week header (handles month boundaries)
+  const getWeekHeader = () => {
+    const start = currentWeek[0];
+    const end = currentWeek[currentWeek.length - 1];
+    const startMonth = MONTH_NAMES[start.getMonth()];
+    const endMonth = MONTH_NAMES[end.getMonth()];
+    return startMonth === endMonth
+      ? `${startMonth} ${start.getDate()} - ${end.getDate()}`
+      : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
+  };
+
   return (
     <div className={styles.schedulerMasterBlock}>
+      {/* CONTROL BAR */}
       <div className={styles.controlBar}>
         <div className={styles.dateBar}>
-          <div className={styles.shiftViewButtons}>
-            <button>Day</button>
-            <button>Week</button>
-            <button>Month</button>
+          <div className={styles.dateDisplay}>
+            <h3>{getWeekHeader()}</h3>
           </div>
           <div className={styles.weekRoller}>
-            <div>
-              <button>prev</button>
-              {/* <span className={styles.datesView}>{currentWeek.length}</span> */}
-              <button>next</button>
-            </div>
-            <button className={styles.todaySwitch}>today</button>
+            <button onClick={goPrev}>
+              <FontAwesomeIcon icon={faBackwardStep} />
+            </button>
+            <button onClick={goToday}>This Week</button>
+            <button onClick={goNext}>
+              <FontAwesomeIcon icon={faForwardStep} />
+            </button>
           </div>
-          <button className={styles.addShiftButton}>+shift</button>
+          <button className={styles.addShiftButton}>Add Shift</button>
         </div>
+
         <div className={styles.userBar}>
           <div className={styles.departmentSelect}>
             <label htmlFor="department">Department</label>
             <select
               name="department"
-              value={chosenTeam}
+              value={chosenTeam || ""}
               onChange={(e) => setChosenTeam(e.target.value)}
             >
-              <option value="">--select department--</option>
+              <option value="all">--all departments--</option>
               {Object.entries(EMPLOYEES).map(([department], index) => (
                 <option value={department} key={index}>
                   {department}
@@ -86,29 +121,39 @@ const Scheduler = () => {
           </div>
         </div>
       </div>
-      <div className={styles.calendarView}>
-        <h2>{MONTH_NAMES[today.getMonth()]}</h2>
-        <div className={styles.theCal}>
-          <div className={styles.departmentList}>
-            <div className={styles.employee}></div>
-            {chosenTeam &&
-              EMPLOYEES[chosenTeam].map(({ name }, index) => (
-                <div key={index} className={styles.employee}>
-                  {name}
+
+      {/* CALENDAR */}
+      <div className={styles.theCal}>
+        {chosenTeam && (
+          <div className={styles.calMainBody}>
+            <div className={styles.employeeList}>
+              <div>Employees</div>
+              {EMPLOYEES[chosenTeam].map(({ name }, index) => (
+                <div key={index} className={styles.employeeTile}>
+                  <FontAwesomeIcon icon={faUser} /> {name}
                 </div>
               ))}
-            {chosenTeam && <div className={styles.employee}>Add Employee</div>}
-          </div>
-          {chosenTeam &&
-            currentWeek.map((day, index) => (
-              <div key={index} className={styles.currentDayOfWeek}>
-                <p>{day.getDate()}</p>
-                {EMPLOYEES[chosenTeam].map(({ name }, index) => (
-                  <div key={index}>set</div>
+              <div className={styles.addEmployee}>
+                <button>Add Employee</button>
+              </div>
+            </div>
+            {currentWeek.map((day, index) => (
+              <div key={index} className={styles.dayCell}>
+                <div className={styles.dayHeader}>
+                  {WEEKDAY[day.getDay()]},{" "}
+                  {day.getDate() + suffix(day.getDate())}
+                </div>
+                {/* Render shifts here */}
+                {EMPLOYEES[chosenTeam].map((name, index) => (
+                  <div>
+                    <FontAwesomeIcon icon={faSquarePlus} />
+                  </div>
                 ))}
+                <div className={styles.spacer}></div>
               </div>
             ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
