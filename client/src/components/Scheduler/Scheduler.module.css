@@ -140,6 +140,8 @@
   background-color: transparent;
   border: inset 1px solid var(--bannerBackground);
   color: var(--textPrimary);
+  height: 100%;
+  width: 100%;
 }
 
 .dayCell > div.spacer {

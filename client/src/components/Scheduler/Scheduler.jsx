@@ -18,6 +18,7 @@ import { faSquarePlus, faUser } from "@fortawesome/free-regular-svg-icons";
 import {
   faBackwardStep,
   faForwardStep,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 const EMPLOYEES = {
@@ -134,18 +135,21 @@ const Scheduler = () => {
                 </div>
               ))}
               <div className={styles.addEmployee}>
-                <button>Add Employee</button>
+                <button>
+                  <FontAwesomeIcon icon={faUserPlus} />
+                  Add Employee
+                </button>
               </div>
             </div>
             {currentWeek.map((day, index) => (
               <div key={index} className={styles.dayCell}>
-                <div className={styles.dayHeader}>
+                <div className={styles.dayHeader} key={index}>
                   {WEEKDAY[day.getDay()]},{" "}
                   {day.getDate() + suffix(day.getDate())}
                 </div>
                 {/* Render shifts here */}
                 {EMPLOYEES[chosenTeam].map((name, index) => (
-                  <div>
+                  <div key={index}>
                     <FontAwesomeIcon icon={faSquarePlus} />
                   </div>
                 ))}
