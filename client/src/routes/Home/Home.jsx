@@ -8,6 +8,8 @@ import React from "react";
 const Home = () => {
   return (
     <div className={styles.homeContainer}>
+      {/* <Calendar /> */}
+      {/* <WeekView /> */}
       <Scheduler />
     </div>
   );

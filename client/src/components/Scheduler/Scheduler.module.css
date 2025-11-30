@@ -8,25 +8,35 @@
 
 .controlBar {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  width: 100%;
+}
+.controlBar > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
   width: 100%;
   border: 1px solid var(--linkText);
-  height: 6rem;
+  height: 4rem;
   padding-inline: 1rem;
+}
+.controlBar > div:first-child {
   border-radius: 18px 18px 0 0;
+  border-bottom: none;
 }
 
-.controlBar div {
-  width: 100%;
-  display: flex;
+.controlBar button:hover {
+  background-color: var(--buttonSecondary);
+}
+.controlBar div button:hover {
+  background-color: var(--buttonSecondary);
 }
 
 .shiftViewButtons {
   display: flex;
   border-radius: 12px;
-  /* border: 2px solid var(--bannerBackground); */
 }
 .shiftViewButtons button {
   font-size: 20px;
@@ -44,10 +54,13 @@
 
 .weekRoller {
   display: flex;
-  align-items: stretch;
   justify-content: center;
+  gap: 0.6rem;
   border-radius: 12px;
-  /* border: 2px solid var(--bannerBackground); */
+}
+
+.weekRoller div {
+  display: flex;
 }
 
 .weekRoller div button {
@@ -57,10 +70,11 @@
   color: var(--bannerBackground);
   padding: 4px 10px;
 }
-.weekRoller div span.datesView {
-  width: 100px;
+.weekRoller span.datesView {
   border: 2px solid var(--bannerBackground);
   background-color: var(--textPrimary);
+  color: var(--buttonPrimary);
+  width: 80px;
 }
 .weekRoller div button:first-child {
   border-radius: 12px 0 0 12px;
@@ -80,11 +94,96 @@
 
 .controlBar button.addShiftButton {
   font-size: 20px;
-  background-color: var(--buttonSecondary);
+  background-color: var(--linkText);
   color: var(--buttonPrimary);
   border: 2px solid var(--bannerBackground);
   color: var(--textPrimary);
   padding: 4px 12px;
   border-radius: 12px;
-  margin-left: auto;
+}
+
+/*
+    CONTROL BAR LAYER 2
+*/
+
+.controlBar div.departmentSelect {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.controlBar div.departmentSelect label {
+  margin-left: 4px;
+}
+.controlBar div.departmentSelect select {
+  font-size: 16px;
+  padding: 2px;
+  border-radius: 8px;
+  color: var(--buttonPrimary);
+}
+
+/*
+   CALENDAR VIEW
+*/
+
+.calendarView {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calendarView h2 {
+  width: 100%;
+  text-align: center;
+  background-color: var(--buttonSecondary);
+  color: var(--buttonPrimary);
+}
+
+.theCal {
+  border: 2px solid var(--linkText);
+  border-top: none;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding: 4px;
+}
+
+.theCal .departmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* background-color: var(--buttonPrimary); */
+  padding: 3px;
+}
+
+.theCal .departmentList div.employee {
+  border: 1px solid var(--buttonPrimary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+}
+.theCal .departmentList div.employee:last-child {
+  background-color: var(--bannerBackground);
+  color: var(--textPrimary);
+  border: 1px solid var(--textPrimary);
+}
+
+.currentDayOfWeek {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  flex: 1;
+  border: 1px solid var(--textPrimary);
+}
+
+.currentDayOfWeek > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border: 1px solid var(--textPrimary);
+  width: 100%;
 }
