@@ -42,9 +42,10 @@ const EMPLOYEES = {
   ],
 };
 
-const DraggableShift = ({ id, children }) => {
+const DraggableShift = ({ id, data, children }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
+    data,
   });
 
   const style = {
@@ -81,13 +82,40 @@ const DroppableCell = ({ id, assignments }) => {
       }}
     >
       {assignedShift ? (
-        <span className={styles.shiftBadge}>
-          [{convertTime(assignedShift.start_time)} -{" "}
-          {convertTime(assignedShift.end_time)}]
-        </span>
+        <DraggableShift
+          id={`assigned-${id}`}
+          data={{ shiftName: assignedKey, sourceCell: id }}
+        >
+          <span className={styles.shiftBadge}>
+            [{convertTime(assignedShift.start_time)} -{" "}
+            {convertTime(assignedShift.end_time)}]
+          </span>
+        </DraggableShift>
       ) : (
         <FontAwesomeIcon icon={faSquarePlus} />
       )}
+    </div>
+  );
+};
+
+const DroppableTrash = ({ onDelete }) => {
+  const { isOver, setNodeRef } = useDroppable({ id: "trash" });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        background: isOver ? "red" : "transparent",
+        color: isOver ? "white" : "var(--primary)",
+        padding: "8px",
+        borderRadius: "4px",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <FontAwesomeIcon icon={faTrash} className={styles.trashShift} />
     </div>
   );
 };
@@ -140,12 +168,22 @@ const Scheduler = () => {
   const handleDragEnd = ({ active, over }) => {
     if (!over) return;
 
-    const shiftName = active.id.replace("shift-", "");
-    const cellID = over.id;
+    const sourceCell = active.data?.current?.sourceCell;
+    const shiftName =
+      active.data?.current?.shiftName || active.id.replace("shift-", "");
+
+    if (over.id === "trash" && sourceCell) {
+      setAssignments((prev) => {
+        const newAssignments = { ...prev };
+        delete newAssignments[sourceCell];
+        return newAssignments;
+      });
+      return;
+    }
 
     setAssignments((prev) => ({
       ...prev,
-      [cellID]: shiftName,
+      [over.id]: shiftName,
     }));
   };
 
@@ -191,7 +229,7 @@ const Scheduler = () => {
                   {shift}
                 </DraggableShift>
               ))}
-              <FontAwesomeIcon icon={faTrash} className={styles.trashShift} />
+              <DroppableTrash />
             </div>
           </div>
         </div>

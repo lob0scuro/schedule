@@ -75,7 +75,7 @@ def logout():
     return jsonify(success=True, message="User logged out successfully"), 200
 
 
-@authorizer.route('/hydrate_user', methods=['GET'])
+@authorizer.route('/hydrate', methods=['GET'])
 @login_required
 def hydrate_user():
     user_data = current_user.serialize_basic()

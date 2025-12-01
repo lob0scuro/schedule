@@ -95,9 +95,9 @@ def get_availability(id):
         return jsonify(success=False, message="Availability not found"), 404
     return jsonify(success=True, availability=availability.serialize()), 200
 
-@reader.route("/schedules", methods=["GET"])
+@reader.route("/availabilities", methods=["GET"])
 @login_required
-def get_schedules():
+def get_availabilities():
     availabilities = Availability.query.all()
     if not availabilities:
         return jsonify(success=False, message="Availabilities not found"), 404
@@ -110,7 +110,7 @@ def get_schedules():
 #------------------
 @reader.route("/time_off_request/<int:id>", methods=["GET"])
 @login_required
-def get_tim_off_request(id):
+def get_time_off_request(id):
     time_off_request = TimeOffRequest.query.get(id)
     if not time_off_request:
         return jsonify(success=False, message="Request not found"), 404

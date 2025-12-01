@@ -27,3 +27,16 @@ closing shift:
 midday shift:
 other shift:
 */
+
+export const ROLES = {
+  admin: "Admin",
+  employee: "Employee",
+};
+
+export const DEPARTMENT = {
+  sales: "Sales",
+  service: "Service",
+  cleaner: "Cleaner",
+  technician: "Technician",
+  office: "Office",
+};

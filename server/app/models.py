@@ -1,9 +1,9 @@
 from app.extensions import db
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime, Date, Time, func, desc
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime, Date, Time, Enum as sqlEnum, func, desc
 from sqlalchemy.orm import relationship
 from datetime import datetime, time
-from enum import  Enum
+from enum import Enum
 
 
 class DepartmentEnum(Enum):
@@ -11,6 +11,7 @@ class DepartmentEnum(Enum):
     SERVICE = "service"
     CLEANER = "cleaner"
     TECHNICIAN = "technician"
+    OFFICE = "office"
     
 class TimeOffStatusEnum(Enum):
     PENDING = "pending"
@@ -35,8 +36,8 @@ class User(db.Model, UserMixin):
     last_name = Column(String(150), nullable=False)
     email = Column(String(256), nullable=False, unique=True)
     password_hash = Column(String(256), nullable=False)
-    role = Column(Enum(RoleEnum), default=RoleEnum.EMPLOYEE, nullable=False)
-    department = Column(Enum(DepartmentEnum), nullable=False)
+    role = Column(sqlEnum(RoleEnum), default=RoleEnum.EMPLOYEE, nullable=False)
+    department = Column(sqlEnum(DepartmentEnum), nullable=False)
     
     schedules = relationship("Schedule", backref="user", lazy=True)
     availability = relationship("Availability", backref="user", lazy=True)
@@ -98,7 +99,7 @@ class Schedule(db.Model):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     shift_id = Column(Integer, ForeignKey("shifts.id"), nullable=False)
     shift_date = Column(Date, nullable=False)
-    location = Column(Enum(LocationEnum), nullable=False)
+    location = Column(sqlEnum(LocationEnum), nullable=False)
     
     def serialize(self):
         return {
@@ -151,7 +152,7 @@ class TimeOffRequest(db.Model):
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
     reason = Column(String(255), nullable=False)
-    status = Column(Enum(TimeOffStatusEnum), default=TimeOffStatusEnum.PENDING, nullable=False)
+    status = Column(sqlEnum(TimeOffStatusEnum), default=TimeOffStatusEnum.PENDING, nullable=False)
     
     def serialize(self):
         return {

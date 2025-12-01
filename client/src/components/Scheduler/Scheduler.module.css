@@ -170,3 +170,11 @@
 .dayCell > div.spacer {
   background-color: var(--linkText);
 }
+
+.dayCell button {
+  background-color: transparent;
+  border: 1px solid var(--primary);
+  width: 100%;
+  height: 100%;
+  border: none;
+}

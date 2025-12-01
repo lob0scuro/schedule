@@ -1,0 +1,44 @@
+.loginFormMaster {
+  width: 60%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.loginFormMaster h2 {
+  font-size: 2.5rem;
+}
+
+.loginFormMaster form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.loginFormMaster form div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 80%;
+}
+
+.loginFormMaster form div input {
+  width: 100%;
+  height: 48px;
+  font-size: 24px;
+  padding: 4px;
+  border: none;
+  border-radius: 8px;
+}
+
+.loginFormMaster button {
+  background-color: var(--primary);
+  color: var(--accent);
+  font-size: 36px;
+  padding: 10px 24px;
+  border-radius: 8px;
+}
