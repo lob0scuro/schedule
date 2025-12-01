@@ -18,7 +18,7 @@
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-  border: 1px solid var(--linkText);
+  border: 1px solid var(--primary);
   height: 4rem;
   padding-inline: 1rem;
 }
@@ -28,10 +28,12 @@
 }
 
 .controlBar button:hover {
-  background-color: var(--buttonSecondary);
+  background-color: var(--primary);
+  color: var(--accent);
 }
 .controlBar div button:hover {
-  background-color: var(--buttonSecondary);
+  background-color: var(--primary);
+  color: var(--accent);
 }
 
 .dateDisplay {
@@ -47,8 +49,8 @@
 .weekRoller button {
   font-size: 20px;
   background-color: transparent;
-  border: 1px solid var(--bannerBackground);
-  color: var(--bannerBackground);
+  border: 1px solid var(--primary);
+  color: var(--primary);
   padding: 4px 10px;
 }
 .weekRoller button:first-child {
@@ -60,48 +62,50 @@
 
 .controlBar button.addShiftButton {
   font-size: 20px;
-  background-color: var(--linkText);
-  color: var(--buttonPrimary);
-  border: 2px solid var(--bannerBackground);
-  color: var(--textPrimary);
+  background-color: var(--primary);
+  color: var(--secondary);
+  border: none;
   padding: 4px 12px;
   border-radius: 12px;
+  box-shadow: -1px 1px 4px #000;
 }
 
 /*
     CONTROL BAR LAYER 2
 */
 
-.controlBar div.departmentSelect {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.controlBar div.departmentSelect label {
-  margin-left: 4px;
-}
-.controlBar div.departmentSelect select {
+.userBar div.departmentSelect select {
   font-size: 18px;
   padding: 2px;
   border-radius: 8px;
-  color: var(--buttonPrimary);
+  color: var(--primary);
   height: 32px;
 }
 
-.controlBar .shiftSelect {
+.userBar .shiftSelect {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.controlBar .shiftSelect button {
+.userBar .shiftSelect button {
   padding: 2px 8px;
-  border: 1px solid var(--buttonPrimary);
+  border: 1px solid var(--primary);
   border-radius: 4px;
   font-size: 18px;
-  background-color: var(--linkText);
-  color: var(--textPrimary);
-  box-shadow: -1px 1px 4px #222;
+  background-color: var(--secondary);
+  color: var(--primary);
+  box-shadow: -1px 1px 4px var(--primary);
+}
+
+.trashShift {
+  font-size: 1.2rem;
+  color: var(--accent);
+  border: 1px solid red;
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: -1px 1px 2px red;
+  background-color: darkred;
 }
 
 /*
@@ -121,7 +125,7 @@
 }
 
 .calMainBody > div {
-  border: 1px solid var(--buttonSecondary);
+  border: 1px solid var(--primary);
   flex: 1;
   min-height: 300px;
   display: flex;
@@ -135,10 +139,10 @@
 }
 .calMainBody > div > div:first-child {
   flex: 0.5;
-  border-bottom: 2px solid var(--linkText);
+  border-bottom: 2px solid var(--primary);
   width: 100%;
-  background-color: var(--bannerBackground);
-  color: var(--textPrimary);
+  background-color: var(--primary);
+  color: var(--accent);
   padding: 4px 2px;
 }
 .calMainBody > div > div {
@@ -151,14 +155,16 @@
 }
 
 .employeeList > div.addEmployee {
-  background-color: var(--linkText);
+  background-color: var(--primary);
 }
 .employeeList > div.addEmployee button {
   background-color: transparent;
-  border: inset 1px solid var(--bannerBackground);
-  color: var(--textPrimary);
+  /* border: inset 1px solid var(--bannerBackground); */
+  color: var(--secondary);
+  border: none;
   height: 100%;
   width: 100%;
+  text-decoration: underline;
 }
 
 .dayCell > div.spacer {

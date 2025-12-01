@@ -2,15 +2,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 
 :root {
-  --background: #2a2829;
-  --backgroundDark: #1e1e1e;
-  --inputBackground: #d9d9d9;
-  --bannerBackground: #262f4c;
+  --primary: #162660;
+  --secondary: #d0e6fd;
   --linkText: #6d7db2;
-  --textPrimary: #f9f9f9;
-  --textSecondary: #8999af;
-  --buttonPrimary: #040b22;
-  --buttonSecondary: #8999af;
+  --accent: #f1e4d1;
 }
 
 * {
@@ -20,9 +15,9 @@
 }
 
 body {
-  background-color: var(--inputBackground);
+  background-color: var(--secondary);
   font-family: "Inter", sans-serif;
-  color: var(--linkText);
+  color: var(--primary);
   line-height: 1.6;
   display: flex;
   flex-direction: column;
@@ -62,7 +57,8 @@ footer {
   height: 5rem;
 }
 
-input {
+input,
+select {
   font-size: 18px;
   border-radius: 6px;
   padding: 2px 4px;

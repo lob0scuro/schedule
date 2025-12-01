@@ -1,5 +1,13 @@
 import EMPLOYEES from "../assets/employees.json";
 
+export const CLEANERS = EMPLOYEES.cleaner;
+export const FRIDGE_TECHS = EMPLOYEES.technician.fridges;
+export const WASHER_TECHS = EMPLOYEES.technician.washers;
+export const DRYER_RANGE_TECHS = EMPLOYEES.technician["dryers-ranges"];
+export const SALES = EMPLOYEES.sales;
+export const SERVICE = EMPLOYEES.service;
+export const OFFICE = EMPLOYEES.other;
+
 export const MONTH_NAMES = [
   "January",
   "Febuary",
@@ -78,14 +86,6 @@ export const changeMonth = (
   });
 };
 
-export const CLEANERS = EMPLOYEES.cleaner;
-export const FRIDGE_TECHS = EMPLOYEES.technician.fridges;
-export const WASHER_TECHS = EMPLOYEES.technician.washers;
-export const DRYER_RANGE_TECHS = EMPLOYEES.technician["dryers-ranges"];
-export const SALES = EMPLOYEES.sales;
-export const SERVICE = EMPLOYEES.service;
-export const OFFICE = EMPLOYEES.other;
-
 export const getWorkWeekFromDate = (date) => {
   let d = new Date(date);
 
@@ -108,4 +108,16 @@ export const getWorkWeekFromDate = (date) => {
   }
 
   return week;
+};
+
+export const convertTime = (time) => {
+  if (time === "OFF") return time;
+
+  const [hourStr, minute] = time.split(":");
+  let hour = parseInt(hourStr, 10);
+
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+
+  return `${hour}:${minute} ${ampm}`;
 };

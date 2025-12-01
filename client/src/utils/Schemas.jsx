@@ -20,3 +20,10 @@ export const SHIFTS = {
     end_time: "OFF",
   },
 };
+
+/*
+opening shift:
+closing shift:
+midday shift:
+other shift:
+*/

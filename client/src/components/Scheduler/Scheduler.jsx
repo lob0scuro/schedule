@@ -12,6 +12,7 @@ import {
   SERVICE,
   WASHER_TECHS,
   suffix,
+  convertTime,
 } from "../../utils/Helpers";
 import { SHIFTS } from "../../utils/Schemas";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,9 +30,7 @@ const EMPLOYEES = {
   office: OFFICE,
   sales: SALES,
   service: SERVICE,
-  washer_techs: WASHER_TECHS,
-  fridge_techs: FRIDGE_TECHS,
-  dryer_range_techs: DRYER_RANGE_TECHS,
+  technicians: [...WASHER_TECHS, ...FRIDGE_TECHS, ...DRYER_RANGE_TECHS],
   all: [
     ...CLEANERS,
     ...OFFICE,
@@ -71,7 +70,8 @@ const DroppableCell = ({ id, assignments }) => {
     <div
       ref={setNodeRef}
       style={{
-        background: isOver ? "#d0eaff" : "transparent",
+        background: isOver ? "var(--linkText)" : "transparent",
+        color: isOver ? "var(--secondary)" : "var(--primary)",
         padding: "4px",
         borderRadius: "4px",
         minHeight: "30px",
@@ -82,7 +82,8 @@ const DroppableCell = ({ id, assignments }) => {
     >
       {assignedShift ? (
         <span className={styles.shiftBadge}>
-          [{assignedShift.start_time} - {assignedShift.end_time}]
+          [{convertTime(assignedShift.start_time)} -{" "}
+          {convertTime(assignedShift.end_time)}]
         </span>
       ) : (
         <FontAwesomeIcon icon={faSquarePlus} />
@@ -171,7 +172,6 @@ const Scheduler = () => {
 
           <div className={styles.userBar}>
             <div className={styles.departmentSelect}>
-              <label htmlFor="department">Department</label>
               <select
                 name="department"
                 value={chosenTeam || ""}
@@ -191,6 +191,7 @@ const Scheduler = () => {
                   {shift}
                 </DraggableShift>
               ))}
+              <FontAwesomeIcon icon={faTrash} className={styles.trashShift} />
             </div>
           </div>
         </div>
