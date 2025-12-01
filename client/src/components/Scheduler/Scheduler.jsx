@@ -13,13 +13,16 @@ import {
   WASHER_TECHS,
   suffix,
 } from "../../utils/Helpers";
+import { SHIFTS } from "../../utils/Schemas";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquarePlus, faUser } from "@fortawesome/free-regular-svg-icons";
 import {
   faBackwardStep,
   faForwardStep,
+  faTrash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 
 const EMPLOYEES = {
   cleaners: CLEANERS,
@@ -40,10 +43,59 @@ const EMPLOYEES = {
   ],
 };
 
+const DraggableShift = ({ id, children }) => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id,
+  });
+
+  const style = {
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : "none",
+    cursor: "grab",
+  };
+
+  return (
+    <button ref={setNodeRef} {...listeners} {...attributes} style={style}>
+      {children}
+    </button>
+  );
+};
+
+const DroppableCell = ({ id, assignments }) => {
+  const { isOver, setNodeRef } = useDroppable({ id });
+  const assignedKey = assignments?.[id];
+  const assignedShift = assignedKey ? SHIFTS[assignedKey] : null;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        background: isOver ? "#d0eaff" : "transparent",
+        padding: "4px",
+        borderRadius: "4px",
+        minHeight: "30px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {assignedShift ? (
+        <span className={styles.shiftBadge}>
+          [{assignedShift.start_time} - {assignedShift.end_time}]
+        </span>
+      ) : (
+        <FontAwesomeIcon icon={faSquarePlus} />
+      )}
+    </div>
+  );
+};
+
 const Scheduler = () => {
   const today = new Date();
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
   const [chosenTeam, setChosenTeam] = useState("all");
+  const [assignments, setAssignments] = useState({});
 
   // Helper: Build Mon-Sat week from a Monday
   const buildWeekFromMonday = (monday) => {
@@ -84,81 +136,107 @@ const Scheduler = () => {
       : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
   };
 
+  const handleDragEnd = ({ active, over }) => {
+    if (!over) return;
+
+    const shiftName = active.id.replace("shift-", "");
+    const cellID = over.id;
+
+    setAssignments((prev) => ({
+      ...prev,
+      [cellID]: shiftName,
+    }));
+  };
+
   return (
     <div className={styles.schedulerMasterBlock}>
-      {/* CONTROL BAR */}
-      <div className={styles.controlBar}>
-        <div className={styles.dateBar}>
-          <div className={styles.dateDisplay}>
-            <h3>{getWeekHeader()}</h3>
-          </div>
-          <div className={styles.weekRoller}>
-            <button onClick={goPrev}>
-              <FontAwesomeIcon icon={faBackwardStep} />
-            </button>
-            <button onClick={goToday}>This Week</button>
-            <button onClick={goNext}>
-              <FontAwesomeIcon icon={faForwardStep} />
-            </button>
-          </div>
-          <button className={styles.addShiftButton}>Add Shift</button>
-        </div>
-
-        <div className={styles.userBar}>
-          <div className={styles.departmentSelect}>
-            <label htmlFor="department">Department</label>
-            <select
-              name="department"
-              value={chosenTeam || ""}
-              onChange={(e) => setChosenTeam(e.target.value)}
-            >
-              <option value="all">--all departments--</option>
-              {Object.entries(EMPLOYEES).map(([department], index) => (
-                <option value={department} key={index}>
-                  {department}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* CALENDAR */}
-      <div className={styles.theCal}>
-        {chosenTeam && (
-          <div className={styles.calMainBody}>
-            <div className={styles.employeeList}>
-              <div>Employees</div>
-              {EMPLOYEES[chosenTeam].map(({ name }, index) => (
-                <div key={index} className={styles.employeeTile}>
-                  <FontAwesomeIcon icon={faUser} /> {name}
-                </div>
-              ))}
-              <div className={styles.addEmployee}>
-                <button>
-                  <FontAwesomeIcon icon={faUserPlus} />
-                  Add Employee
-                </button>
-              </div>
+      <DndContext onDragEnd={handleDragEnd}>
+        {/* CONTROL BAR */}
+        <div className={styles.controlBar}>
+          <div className={styles.dateBar}>
+            <div className={styles.dateDisplay}>
+              <h3>{getWeekHeader()}</h3>
             </div>
-            {currentWeek.map((day, index) => (
-              <div key={index} className={styles.dayCell}>
-                <div className={styles.dayHeader} key={index}>
-                  {WEEKDAY[day.getDay()]},{" "}
-                  {day.getDate() + suffix(day.getDate())}
-                </div>
-                {/* Render shifts here */}
-                {EMPLOYEES[chosenTeam].map((name, index) => (
-                  <div key={index}>
-                    <FontAwesomeIcon icon={faSquarePlus} />
+            <div className={styles.weekRoller}>
+              <button onClick={goPrev}>
+                <FontAwesomeIcon icon={faBackwardStep} />
+              </button>
+              <button onClick={goToday}>This Week</button>
+              <button onClick={goNext}>
+                <FontAwesomeIcon icon={faForwardStep} />
+              </button>
+            </div>
+            <button className={styles.addShiftButton}>Add Shift</button>
+          </div>
+
+          <div className={styles.userBar}>
+            <div className={styles.departmentSelect}>
+              <label htmlFor="department">Department</label>
+              <select
+                name="department"
+                value={chosenTeam || ""}
+                onChange={(e) => setChosenTeam(e.target.value)}
+              >
+                <option value="all">--all departments--</option>
+                {Object.entries(EMPLOYEES).map(([department], index) => (
+                  <option value={department} key={index}>
+                    {department}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.shiftSelect}>
+              {Object.keys(SHIFTS).map((shift) => (
+                <DraggableShift id={`shift-${shift}`} key={shift}>
+                  {shift}
+                </DraggableShift>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* CALENDAR */}
+        <div className={styles.theCal}>
+          {chosenTeam && (
+            <div className={styles.calMainBody}>
+              <div className={styles.employeeList}>
+                <div>Employees</div>
+                {EMPLOYEES[chosenTeam].map(({ name }, index) => (
+                  <div key={index} className={styles.employeeTile}>
+                    <FontAwesomeIcon icon={faUser} /> {name}
                   </div>
                 ))}
-                <div className={styles.spacer}></div>
+                <div className={styles.addEmployee}>
+                  <button>
+                    <FontAwesomeIcon icon={faUserPlus} />
+                    Add Employee
+                  </button>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              {currentWeek.map((day, index) => (
+                <div key={index} className={styles.dayCell}>
+                  <div className={styles.dayHeader} key={index}>
+                    {WEEKDAY[day.getDay()]},{" "}
+                    {day.getDate() + suffix(day.getDate())}
+                  </div>
+                  {/* Render shifts here */}
+                  {EMPLOYEES[chosenTeam].map(({ name }, empIndex) => {
+                    const cellID = `${name}|${day.toISOString().split("T")[0]}`;
+                    return (
+                      <DroppableCell
+                        id={cellID}
+                        key={empIndex}
+                        assignments={assignments}
+                      />
+                    );
+                  })}
+                  <div className={styles.spacer}></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </DndContext>
     </div>
   );
 };

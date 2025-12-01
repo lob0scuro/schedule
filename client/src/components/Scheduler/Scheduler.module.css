@@ -81,10 +81,27 @@
   margin-left: 4px;
 }
 .controlBar div.departmentSelect select {
-  font-size: 16px;
+  font-size: 18px;
   padding: 2px;
   border-radius: 8px;
   color: var(--buttonPrimary);
+  height: 32px;
+}
+
+.controlBar .shiftSelect {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.controlBar .shiftSelect button {
+  padding: 2px 8px;
+  border: 1px solid var(--buttonPrimary);
+  border-radius: 4px;
+  font-size: 18px;
+  background-color: var(--linkText);
+  color: var(--textPrimary);
+  box-shadow: -1px 1px 4px #222;
 }
 
 /*
