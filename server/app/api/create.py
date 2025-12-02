@@ -150,13 +150,9 @@ def create_availability_slot():
 @login_required
 def time_off_request():
     data = request.get_json()
-    user_id = data.get("user_id")
     start_str = data.get("start_date")
     end_str = data.get("end_date")
     reason = data.get("reason")
-    
-    if not User.query.get(user_id):
-        return jsonify(success=False, message="User not found."), 404
     
     try:
         start_date = date.fromisoformat(start_str)
@@ -165,7 +161,7 @@ def time_off_request():
         return jsonify(success=False, message="Invalid date format. Use YYYY-MM-DD"), 400
     
     exists = TimeOffRequest.query.filter(
-        TimeOffRequest.user_id == user_id,
+        TimeOffRequest.user_id == current_user.id,
         TimeOffRequest.start_date <= end_date,
         TimeOffRequest.end_date >= start_date
     ).first()
@@ -174,7 +170,7 @@ def time_off_request():
     
     try:
         time_off = TimeOffRequest(
-            user_id=user_id,
+            user_id=current_user.id,
             start_date=start_date,
             end_date=end_date,
             reason=reason,

@@ -16,8 +16,8 @@ import {
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
-import RegisterForm from "../Register/RegisterForm";
-import ShiftForm from "../Shift/ShiftForm";
+import RegisterForm from "../../components/Register/RegisterForm";
+import ShiftForm from "../../components/Shift/ShiftForm";
 import toast from "react-hot-toast";
 
 const DraggableShift = ({ id, data, children }) => {

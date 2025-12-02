@@ -1,15 +1,20 @@
 import Calendar from "../../components/Calendar/Calendar";
-import Scheduler from "../../components/Scheduler/Scheduler";
 import styles from "./Home.module.css";
 import React from "react";
 import RegisterForm from "../../components/Register/RegisterForm";
 import LoginForm from "../../components/Login/LoginForm";
+import TimeOffRequest from "../../components/TimeOffRequest/TimeOffRequest";
+import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Home = () => {
+  const { user } = useAuth();
   return (
     <div className={styles.homeContainer}>
-      {/* <Calendar /> */}
-      <Scheduler />
+      <div className={styles.navLinks}>
+        <Link to={"/scheduler"}>Scheduler</Link>
+        <Link to={"/time-off-request"}>Time Off Request</Link>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 const RootLayout = () => {
   const { user, setUser } = useAuth();
 
   const logout = async () => {
+    if (!confirm("Logout?")) return;
     const response = await fetch("/api/auth/logout");
     const data = await response.json();
     if (!data.success) {
@@ -17,7 +18,9 @@ const RootLayout = () => {
   };
   return (
     <>
-      <header>SCHEDULER</header>
+      <header>
+        <Link to={"/"}>Scheduler</Link>
+      </header>
       <main>
         <Outlet />
       </main>

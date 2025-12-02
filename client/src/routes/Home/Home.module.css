@@ -5,3 +5,10 @@
   gap: 3rem;
   width: 100%;
 }
+
+.navLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
