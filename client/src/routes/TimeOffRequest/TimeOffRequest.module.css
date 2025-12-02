@@ -1,0 +1,70 @@
+.timeOffRequestMasterBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 80%;
+  max-width: 600px;
+}
+
+.timeOffRequestMasterBlock form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.timeOffRequestMasterBlock form div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.timeOffRequestMasterBlock form div input:not(input[type="radio"]) {
+  width: 100%;
+  height: 44px;
+}
+
+h3.reasonHeader {
+  font-size: 2rem;
+  margin-top: 2rem;
+}
+.timeOffRequestMasterBlock form div.reasonRadio {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+  width: 180%;
+}
+
+.timeOffRequestMasterBlock form div.reasonRadio label {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  font-size: 24px;
+}
+.timeOffRequestMasterBlock form div.reasonRadio label input {
+  width: 30px;
+  height: 30px;
+}
+
+.timeOffRequestMasterBlock form div.reasonRadio textarea {
+  grid-column-start: 1;
+  grid-column-end: 5;
+  height: 10rem;
+  resize: none;
+  font-size: 22px;
+  padding: 6px;
+}
+
+.timeOffRequestMasterBlock button[type="submit"] {
+  font-size: 2.4rem;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--primary);
+  color: var(--accent);
+  margin-top: 4rem;
+  box-shadow: -1px 1px 5px #222;
+}
