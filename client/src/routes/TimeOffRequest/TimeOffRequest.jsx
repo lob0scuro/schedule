@@ -24,6 +24,13 @@ const TimeOffRequest = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const payload = {
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      reason:
+        formData.reason === "other" ? formData.other_reason : formData.reason,
+    };
+
     try {
       const response = await fetch("/api/create/time_off_request", {
         method: "POST",
@@ -31,7 +38,7 @@ const TimeOffRequest = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       if (!data.success) {

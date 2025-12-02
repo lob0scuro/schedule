@@ -125,4 +125,4 @@ def get_time_off_requests():
     time_off_requests = TimeOffRequest.query.all()
     if not time_off_requests:
         return jsonify(success=False, message="Requests not found"), 404
-    return jsonify(success=True, time_off_requests=[t.serialize_basic() for t in time_off_requests]), 200
+    return jsonify(success=True, time_off_requests=[t.serialize() for t in time_off_requests]), 200

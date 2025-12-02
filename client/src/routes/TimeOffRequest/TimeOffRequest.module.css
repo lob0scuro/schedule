@@ -47,6 +47,13 @@ h3.reasonHeader {
 .timeOffRequestMasterBlock form div.reasonRadio label input {
   width: 30px;
   height: 30px;
+  appearance: none;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  position: relative;
+}
+.timeOffRequestMasterBlock form div.reasonRadio label input:checked {
+  background-color: var(--primary);
 }
 
 .timeOffRequestMasterBlock form div.reasonRadio textarea {

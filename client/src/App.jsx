@@ -13,6 +13,7 @@ import RegisterForm from "./components/Register/RegisterForm";
 import Scheduler from "./routes/Scheduler/Scheduler";
 import TimeOffRequest from "./routes/TimeOffRequest/TimeOffRequest";
 import AdminLayout from "./layout/AdminLayout";
+import TimeOffStatus from "./routes/TimeOffRequest/Status/TimeOffStatus";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -25,6 +26,10 @@ const App = () => {
           <Route path="time-off-request" element={<TimeOffRequest />} />
           <Route element={<AdminLayout />}>
             <Route path="scheduler" element={<Scheduler />} />
+            <Route
+              path="time-off-requests-status"
+              element={<TimeOffStatus />}
+            />
           </Route>
         </Route>
       </Route>

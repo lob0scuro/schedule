@@ -12,7 +12,14 @@ const Home = () => {
   return (
     <div className={styles.homeContainer}>
       <div className={styles.navLinks}>
-        <Link to={"/scheduler"}>Scheduler</Link>
+        {user.role === "admin" && (
+          <>
+            <Link to={"/scheduler"}>Scheduler</Link>
+            <Link to={"/time-off-requests-status"}>
+              Approve/Deny Time Off Requests
+            </Link>
+          </>
+        )}
         <Link to={"/time-off-request"}>Time Off Request</Link>
       </div>
     </div>
