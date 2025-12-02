@@ -3,7 +3,7 @@ import styles from "./Home.module.css";
 import React from "react";
 import RegisterForm from "../../components/Register/RegisterForm";
 import LoginForm from "../../components/Login/LoginForm";
-import TimeOffRequest from "../../components/TimeOffRequest/TimeOffRequest";
+import TimeOffRequest from "../TimeOffRequest/TimeOffRequest";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 

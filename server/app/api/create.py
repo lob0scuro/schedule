@@ -90,6 +90,53 @@ def create_schedule_item():
         
         
 #--------------------
+#   BULK SCHEDULE COMMIT
+#--------------------
+@creator.route("/bulk_schedule", methods=["POST"])
+@login_required
+def create_bulk_schedule():
+    data = request.get_json()
+    schedules = data.get("schedules")
+    
+    if not schedules:
+        return jsonify(success=False, message="No schedules provided"), 400
+    
+    try:
+        for item in schedules:
+            user_id = item.get("user_id")
+            shift_id = item.get("shift_id")
+            shift_date_str = item.get("shift_date")
+            location_str = item.get("location")
+            
+            if not all([user_id, shift_id, shift_date_str, location_str]):
+                raise ValueError("Missing required fields")
+            
+            shift_date = date.fromisoformat(shift_date_str)
+            location = LocationEnum(location_str.lower())
+            
+            exists = Schedule.query.filter_by(
+                user_id=user_id,
+                shift_id=shift_id,
+                shift_date=shift_date
+            ).first()
+            if exists:
+                continue
+            
+            schedule_item = Schedule(
+                user_id=user_id,
+                shift_id=shift_id,
+                shift_date=shift_date,
+                location=location
+            )
+            db.session.add(schedule_item)
+        db.session.commit()
+        return jsonify(success=True, message="Shifts have been submitted!"), 201
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"[BULK SCHEDULE ERROR]: {e}")
+        return jsonify(success=False, message=str(e)), 500
+
+#--------------------
 #   CREATE A NEW AVAILABILITY BLOCK
 #--------------------
 @creator.route("/availability", methods=["POST"])

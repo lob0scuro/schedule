@@ -11,7 +11,7 @@ import ProtectedLayout from "./layout/ProtectedLayout";
 import LoginForm from "./components/Login/LoginForm";
 import RegisterForm from "./components/Register/RegisterForm";
 import Scheduler from "./routes/Scheduler/Scheduler";
-import TimeOffRequest from "./components/TimeOffRequest/TimeOffRequest";
+import TimeOffRequest from "./routes/TimeOffRequest/TimeOffRequest";
 import AdminLayout from "./layout/AdminLayout";
 
 const App = () => {
