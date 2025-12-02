@@ -17,6 +17,7 @@ def create_shift():
     data = request.get_json()
     start_str = data.get("start_time")
     end_str = data.get("end_time")
+    title = data.get("title")
     
     if not start_str or not end_str:
         return jsonify(success=False, message="Start and end times are required."), 400
@@ -27,7 +28,7 @@ def create_shift():
     except ValueError:
         return jsonify(success=False, message="Invalid Time Format"), 400
     try:
-        new_shift = Shift(start_time=start_time, end_time=end_time)
+        new_shift = Shift(title=title.title(), start_time=start_time, end_time=end_time)
         
         db.session.add(new_shift)
         db.session.commit()

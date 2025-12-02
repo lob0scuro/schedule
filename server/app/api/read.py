@@ -31,6 +31,9 @@ def get_users():
 @reader.route("department/<department>", methods=["GET"])
 @login_required
 def get_department(department):
+    if department == "all":
+        users = User.query.all()
+        return jsonify(success=True, department=[u.serialize_basic() for u in users]), 200
     try:
         department = DepartmentEnum(department.lower())
     except ValueError:

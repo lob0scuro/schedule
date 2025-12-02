@@ -40,8 +40,8 @@ def register():
     
     password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = User(
-        first_name=first_name.capitalize(),
-        last_name=last_name.capitalize(),
+        first_name=first_name.title(),
+        last_name=last_name.title(),
         email=email,
         password_hash=password_hash,
         role=role_enum,
@@ -76,7 +76,8 @@ def logout():
 
 
 @authorizer.route('/hydrate', methods=['GET'])
-@login_required
 def hydrate_user():
-    user_data = current_user.serialize_basic()
-    return jsonify(success=True, user=user_data), 200
+    if not current_user:
+        return jsonify(success=False, message="Unauthorized")
+    else:
+        return jsonify(success=True, user=current_user.serialize_basic()), 200

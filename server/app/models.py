@@ -71,6 +71,7 @@ class Shift(db.Model):
     __tablename__ = "shifts"
     
     id = Column(Integer, primary_key=True)
+    title = Column(String(100), nullable=False)
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
     
@@ -79,6 +80,7 @@ class Shift(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "title": self.title,
             "start_time": self.start_time.strftime("%H:%M"),
             "end_time": self.end_time.strftime("%H:%M"),
             "schedules": [s.serialize() for s in self.schedules]
@@ -87,6 +89,7 @@ class Shift(db.Model):
     def serialize_basic(self):
         return {
             "id": self.id,
+            "title": self.title,
             "start_time": self.start_time.strftime("%H:%M"),
             "end_time": self.end_time.strftime("%H:%M"),
         }

@@ -1,0 +1,35 @@
+.shiftFormMasterBlock {
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.shiftFormMasterBlock form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.shiftFormMasterBlock form div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.shiftFormMasterBlock form div input {
+  height: 42px;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.shiftFormMasterBlock form button {
+  background-color: var(--linkText);
+  color: var(--secondary);
+  padding: 8px 12px;
+  font-size: 18px;
+  margin-block: 12px;
+  align-self: stretch;
+  border: none;
+  border-radius: 8px;
+  box-shadow: -1px 1px 4px var(--accent);
+}
