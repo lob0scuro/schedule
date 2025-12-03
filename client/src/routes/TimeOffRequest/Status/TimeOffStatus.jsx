@@ -1,9 +1,15 @@
 import toast from "react-hot-toast";
 import styles from "./TimeOffStatus.module.css";
 import React, { useEffect, useState } from "react";
+import { convertDate } from "../../../utils/Helpers";
 
 const TimeOffStatus = () => {
-  const [requestOffs, setRequestOffs] = useState([]);
+  const [ro, setRo] = useState({
+    pending: [],
+    approved: [],
+    denied: [],
+  });
+  const [statusChanges, setStatusChanges] = useState(0);
 
   useEffect(() => {
     const getRequestOffs = async () => {
@@ -11,14 +17,23 @@ const TimeOffStatus = () => {
       const data = await response.json();
       if (!data.success) {
         toast.error(data.message);
-        setRequestOffs(null);
         return;
       }
-      setRequestOffs(data.time_off_requests);
+      setRo({
+        pending: [
+          ...data.time_off_requests.filter((t) => t.status === "pending"),
+        ],
+        approved: [
+          ...data.time_off_requests.filter((t) => t.status === "approved"),
+        ],
+        denied: [
+          ...data.time_off_requests.filter((t) => t.status === "denied"),
+        ],
+      });
     };
 
     getRequestOffs();
-  }, []);
+  }, [statusChanges]);
 
   const handleUpdate = async (userID, newStatus) => {
     const response = await fetch(
@@ -33,6 +48,7 @@ const TimeOffStatus = () => {
       toast.error(data.message);
       return;
     }
+    setStatusChanges((prev) => prev + 1);
     toast.success(data.message);
   };
 
@@ -42,29 +58,100 @@ const TimeOffStatus = () => {
       <div>
         <p>Pending Requests</p>
         <ul className={styles.pendingList}>
-          {requestOffs
-            .filter((r) => r.status === "pending")
-            .map(({ id, user, status, reason }) => (
-              <li key={id}>
-                <div>
-                  <p>status: {status}</p>
-                  <p>reason: {reason}</p>
-                  <p>
-                    <small>
+          {ro.pending.length !== 0 ? (
+            ro.pending.map(
+              ({ id, user, status, reason, start_date, end_date }) => (
+                <li key={id}>
+                  <div>
+                    <h4>
                       {user.first_name} {user.last_name[0]}.
-                    </small>
-                  </p>
-                </div>
-                <div>
-                  <button onClick={() => handleUpdate(id, "approved")}>
-                    Approve
-                  </button>
-                  <button onClick={() => handleUpdate(id, "denied")}>
-                    Deny
-                  </button>
-                </div>
-              </li>
-            ))}
+                    </h4>
+                    <p>Start Date: {convertDate(start_date)}</p>
+                    <p>End Date: {convertDate(end_date)}</p>
+                    <p>reason: {reason}</p>
+                  </div>
+                  <div>
+                    <button onClick={() => handleUpdate(id, "approved")}>
+                      Approve
+                    </button>
+                    <button
+                      className={styles.denyRequest}
+                      onClick={() => handleUpdate(id, "denied")}
+                    >
+                      Deny
+                    </button>
+                  </div>
+                </li>
+              )
+            )
+          ) : (
+            <li className={styles.noRequests}>
+              <p>No Pending Requests</p>
+            </li>
+          )}
+        </ul>
+      </div>
+      <div>
+        <p>Approved Requests</p>
+        <ul className={styles.approvedList}>
+          {ro.approved.length !== 0 ? (
+            ro.approved.map(
+              ({ id, user, status, reason, start_date, end_date }) => (
+                <li key={id}>
+                  <div>
+                    <h4>
+                      {user.first_name} {user.last_name[0]}.
+                    </h4>
+                    <p>reason: {reason}</p>
+                    <p>Start Date: {convertDate(start_date)}</p>
+                    <p>End Date: {convertDate(end_date)}</p>
+                  </div>
+                  <div>
+                    <button
+                      className={styles.denyRequest}
+                      onClick={() => handleUpdate(id, "denied")}
+                    >
+                      Deny
+                    </button>
+                  </div>
+                </li>
+              )
+            )
+          ) : (
+            <li className={styles.noRequests}>
+              <p>No Approved Requests</p>
+            </li>
+          )}
+        </ul>
+      </div>
+      <div>
+        <p>Denied Requests</p>
+        <ul className={styles.deniedList}>
+          {ro.denied.length !== 0 ? (
+            ro.denied.map(
+              ({ id, user, status, reason, start_date, end_date }) => (
+                <li key={id}>
+                  <div>
+                    <h4>
+                      {user.first_name} {user.last_name[0]}.
+                    </h4>
+                    <p>reason: {reason}</p>
+                    <p>Start Date: {convertDate(start_date)}</p>
+                    <p>End Date: {convertDate(end_date)}</p>
+                  </div>
+                  <div>
+                    <button onClick={() => handleUpdate(id, "approved")}>
+                      Approve
+                    </button>
+                  </div>
+                </li>
+              )
+            )
+          ) : (
+            <li className={styles.noRequests}>
+              <p>No Denied Requests</p>
+            </li>
+          )}
         </ul>
       </div>
     </div>

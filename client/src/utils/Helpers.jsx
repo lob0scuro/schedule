@@ -121,3 +121,8 @@ export const convertTime = (time) => {
 
   return `${hour}:${minute} ${ampm}`;
 };
+
+export const convertDate = (date_str) => {
+  const [year, month, day] = date_str.split("-");
+  return `${MONTH_NAMES[Number(month) - 1]} ${day + suffix(day)}, ${year}`;
+};

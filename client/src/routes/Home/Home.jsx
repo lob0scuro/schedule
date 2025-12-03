@@ -15,6 +15,7 @@ const Home = () => {
         {user.role === "admin" && (
           <>
             <Link to={"/scheduler"}>Scheduler</Link>
+            <Link to={"/beta"}>BETA</Link>
             <Link to={"/time-off-requests-status"}>
               Approve/Deny Time Off Requests
             </Link>

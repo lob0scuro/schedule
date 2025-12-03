@@ -33,7 +33,7 @@ def get_users():
 def get_department(department):
     if department == "all":
         users = User.query.all()
-        return jsonify(success=True, department=[u.serialize_basic() for u in users]), 200
+        return jsonify(success=True, department=[u.serialize() for u in users]), 200
     try:
         department = DepartmentEnum(department.lower())
     except ValueError:
@@ -41,7 +41,7 @@ def get_department(department):
     users = User.query.filter_by(department=department).all()
     if not users:
         return jsonify(success=False, message="User in that department not found."), 404
-    return jsonify(success=True, department=[u.serialize_basic() for u in users]), 200
+    return jsonify(success=True, department=[u.serialize() for u in users]), 200
 
 
 

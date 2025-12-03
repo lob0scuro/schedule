@@ -107,7 +107,6 @@ const DroppableTrash = ({ onDelete }) => {
 /*
    MAIN SCHEDULER COMPONENT
 */
-
 const Scheduler = () => {
   const today = new Date();
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
@@ -151,7 +150,7 @@ const Scheduler = () => {
 
           newDepartments[key] = data.department;
         });
-
+        console.log(newDepartments);
         setDepartments(newDepartments);
       } catch (error) {
         console.error(error);
