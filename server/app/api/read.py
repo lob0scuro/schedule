@@ -83,7 +83,7 @@ def get_schedules():
     schedules = Schedule.query.all()
     if not schedules:
         return jsonify(success=False, message="Schedules not found"), 404
-    return jsonify(success=True, schedules=[s.serialize_basic() for s in schedules]), 200
+    return jsonify(success=True, schedules=[s.serialize() for s in schedules]), 200
 
 
 

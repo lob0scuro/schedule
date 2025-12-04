@@ -1,5 +1,5 @@
 import styles from "./SchedulerBeta.module.css";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import {
   MONTH_NAMES,
   WEEKDAY,
@@ -93,10 +93,14 @@ const SchedulerBeta = () => {
         toast.error(scheduleList.message);
         return;
       }
-      setShifts(scheduleList.schedules);
+      setSchedules(scheduleList.schedules);
     };
     scheduleGet();
   }, []);
+
+  useEffect(() => {
+    console.log(pendingAssignments);
+  }, [pendingAssignments]);
 
   //GENERATE SCHEDULE ROWS [USER ID, ...WEEKDAYS]
   const scheduleRows = useMemo(() => {
@@ -108,7 +112,7 @@ const SchedulerBeta = () => {
         const pending = pendingAssignments[key];
 
         const scheduledShift = schedules.find(
-          (s) => s.user_id === user.id && shift_date === dateStr
+          (s) => s.user_id === user.id && s.shift_date === dateStr
         );
 
         const timeOffRequest = user.time_off_requests?.find(
@@ -126,7 +130,7 @@ const SchedulerBeta = () => {
         };
       });
     });
-  }, [departments, selectedDpt, currentWeek]);
+  }, [departments, selectedDpt, currentWeek, pendingAssignments, schedules]);
 
   // Week header (handles month boundaries)
   const getWeekHeader = () => {
@@ -195,6 +199,7 @@ const SchedulerBeta = () => {
   };
 
   const submitSchedule = async () => {
+    if (!confirm("Submit Schedule?")) return;
     const assignments = Object.values(pendingAssignments);
 
     if (assignments.length === 0) {
@@ -221,6 +226,8 @@ const SchedulerBeta = () => {
     setPendingAssignments({});
     //refreshSchedules()
   };
+
+  const getShiftByID = (id) => shifts.find((s) => s.id === id);
 
   return (
     <div className={styles.schedulerMaster}>
@@ -255,7 +262,7 @@ const SchedulerBeta = () => {
             {shifts?.map(({ id, title, start_time, end_time }) => (
               <button
                 key={id}
-                onClick={() => setSelectedShift(id)}
+                onClick={() => setSelectedShift(selectedShift === id ? "" : id)}
                 className={selectedShift === id ? styles.selectedShift : ""}
               >
                 {title}
@@ -340,9 +347,14 @@ const SchedulerBeta = () => {
                   styles.dateCell,
                 ])}
                 key={cellIndex}
+                onClick={() => handleCellClick(cell)}
               >
                 {cell.is_time_off ? (
                   <FontAwesomeIcon icon={faNotdef} />
+                ) : cell.shift_id ? (
+                  <span className={styles.shiftAssignedCell}>
+                    {getShiftByID(cell.shift_id)?.title || "Shift"}
+                  </span>
                 ) : (
                   <FontAwesomeIcon icon={faSquarePlus} />
                 )}
@@ -366,7 +378,9 @@ const SchedulerBeta = () => {
           {currentWeek.map((day, index) => (
             <div key={index} className={styles.footerCell}></div>
           ))}
-          <button className={styles.submitShiftButton}>Submit Shift</button>
+          <button onClick={submitSchedule} className={styles.submitShiftButton}>
+            Submit Shift
+          </button>
         </div>
       </div>
     </div>

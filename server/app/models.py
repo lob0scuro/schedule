@@ -75,8 +75,8 @@ class Shift(db.Model):
     
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
+    start_time = Column(Time, nullable=True)
+    end_time = Column(Time, nullable=True)
     
     schedules = relationship("Schedule", backref="shift", lazy=True)
     
@@ -84,8 +84,8 @@ class Shift(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "start_time": self.start_time.strftime("%H:%M"),
-            "end_time": self.end_time.strftime("%H:%M"),
+            "start_time": self.start_time.strftime("%H:%M") if self.start_time else None,
+            "end_time": self.end_time.strftime("%H:%M") if self.end_time else None,
             "schedules": [s.serialize() for s in self.schedules]
         }
         
@@ -93,8 +93,8 @@ class Shift(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "start_time": self.start_time.strftime("%H:%M"),
-            "end_time": self.end_time.strftime("%H:%M"),
+            "start_time": self.start_time.strftime("%H:%M") if self.start_time else None,
+            "end_time": self.end_time.strftime("%H:%M") if self.end_time else None,
         }
     
     
@@ -120,8 +120,8 @@ class Schedule(db.Model):
                 "department": self.user.department.value
             },
             "shift": {
-                "start_time": self.shift.start_time.strftime("%H:%M"),
-                "end_time": self.shift.end_time.strftime("%H:%M")  
+                "start_time": self.shift.start_time.strftime("%H:%M") if self.shift.start_time else None,
+                "end_time": self.shift.end_time.strftime("%H:%M") if self.shift.end_time else None
             }
         }
     

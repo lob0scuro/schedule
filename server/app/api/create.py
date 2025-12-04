@@ -20,7 +20,10 @@ def create_shift():
     title = data.get("title")
     
     if not start_str or not end_str:
-        return jsonify(success=False, message="Start and end times are required."), 400
+        off = Shift(title=title)
+        db.session.add(off)
+        db.session.commit()
+        return jsonify(success=True, message="New shift created!"), 201
     
     try:
         start_time = time.fromisoformat(start_str)
@@ -89,26 +92,6 @@ def create_schedule_item():
         return jsonify(success=False, message="There was an error when making new schedule item."), 500
         
 
-# @creator.route("/bulk_schedule", methods=["POST"])
-# @login_required
-# def create_bulk_schedule():
-#     data = request.json.get("schedules", [])
-    
-#     try:
-#         for item in data:
-#             schedule = Schedule(
-#                 user_id=item["user_id"],
-#                 shift_id=item["shift_id"],
-#                 shift_date=item["shift_date"],
-#                 location=item["location"]
-#             )
-#             db.session.add(schedule)
-#         db.session.commit()
-        
-#         return jsonify(success=True, message="Schedules submitted!"), 201
-#     except Exception as e:
-#         current_app.logger.error(f"[BULK SCHEDULE ERROR]: {e}")
-#         return jsonify(success=False, message="There was an error when submitting schedule."), 500
 
 #--------------------
 #   BULK SCHEDULE COMMIT
