@@ -2,7 +2,7 @@ import styles from "./ShiftForm.module.css";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-const ShiftForm = ({ bool }) => {
+const ShiftForm = ({ bool, ...props }) => {
   const [formData, setFormData] = useState({
     title: "",
     start_time: "",

@@ -20,7 +20,7 @@ def get_user(id):
         return jsonify(success=False, message="User not found"), 404
     return jsonify(success=True, user=user.serialize()), 200
 
-@reader.route("/get_users", methods=["GET"])
+@reader.route("/users", methods=["GET"])
 @login_required
 def get_users():
     users = User.query.all()

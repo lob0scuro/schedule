@@ -150,7 +150,6 @@ const Scheduler = () => {
 
           newDepartments[key] = data.department;
         });
-        console.log(newDepartments);
         setDepartments(newDepartments);
       } catch (error) {
         console.error(error);

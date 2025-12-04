@@ -3,3 +3,98 @@
   border: 2px solid var(--primary);
   border-radius: 8px;
 }
+
+/*
+    CONTROL BAR
+*/
+.controlBar {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+    CONTROL BAR ROW 1
+*/
+.controlBar .cbRow1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.controlBar .cbRow1 .weekShift {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.controlBar .cbRow1 .weekShift button {
+  font-size: 1.5rem;
+  padding: 6px 12px;
+  background-color: var(--linkText);
+  color: #fefefe;
+}
+
+.controlBar .cbRow1 .weekShift button:first-child {
+  border-radius: 12px 0 0 12px;
+}
+.controlBar .cbRow1 .weekShift button:nth-child(2) {
+  padding-inline: 24px;
+}
+.controlBar .cbRow1 .weekShift button:last-child {
+  border-radius: 0 12px 12px 0;
+}
+
+/*
+    CONTROL BAR ROW 2
+*/
+.controlBar .cbRow2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-top: 1px solid #333;
+  position: relative;
+}
+
+.controlBar .cbRow2 select {
+  width: fit-content;
+  height: 34px;
+}
+
+.controlBar .cbRow2 .shiftControls {
+  flex: 1;
+  padding-inline: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.controlBar .cbRow2 .shiftControls button {
+  background-color: var(--primary);
+  color: var(--accent);
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+.controlBar .cbRow2 button.addShiftButton {
+  background-color: darkgreen;
+  color: #fefefe;
+  font-size: 1.4rem;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: -1px 1px 3px #333;
+}
+
+.cbShiftForm {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--primary);
+  color: #fefefe;
+  z-index: 100;
+  transition: all 2s ease;
+}
