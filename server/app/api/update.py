@@ -42,7 +42,7 @@ def update_user(id):
     
     data = request.get_json()
     first_name = data.get("first_name")
-    last_name = data.get("first_name")
+    last_name = data.get("last_name")
     email = data.get("email")
     role = data.get("role")
     department = data.get("department")

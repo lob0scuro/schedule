@@ -48,3 +48,44 @@ select {
   padding: 10px 24px;
   border-radius: 8px;
 }
+
+/*
+    IMPORTED TO COMPONENT
+*/
+
+.importUserForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.importUserForm form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 1.5rem;
+}
+
+.importUserForm form div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.importUserForm form div input,
+select {
+  width: fit-content;
+  height: 30px;
+  font-size: 18px;
+}
+
+.importUserForm form button[type="submit"] {
+  /* grid-column-start: 1;
+  grid-column-end: 3; */
+  background-color: var(--primary);
+  color: #fefefe;
+  margin: 20px 0;
+  border-radius: 8px;
+  padding: 10px 0;
+}

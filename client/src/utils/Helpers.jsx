@@ -126,3 +126,10 @@ export const convertDate = (date_str) => {
   const [year, month, day] = date_str.split("-");
   return `${MONTH_NAMES[Number(month) - 1]} ${day + suffix(day)}, ${year}`;
 };
+
+export const formatDate = (date) => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+};

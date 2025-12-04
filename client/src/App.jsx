@@ -15,6 +15,7 @@ import TimeOffRequest from "./routes/TimeOffRequest/TimeOffRequest";
 import AdminLayout from "./layout/AdminLayout";
 import TimeOffStatus from "./routes/TimeOffRequest/Status/TimeOffStatus";
 import SchedulerBeta from "./routes/Scheduler/SchedulerBeta";
+import UserProfile from "./routes/User/UserProfile";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -28,6 +29,7 @@ const App = () => {
           <Route element={<AdminLayout />}>
             <Route path="scheduler" element={<Scheduler />} />
             <Route path="beta" element={<SchedulerBeta />} />
+            <Route path="user/:id" element={<UserProfile />} />
             <Route
               path="time-off-requests-status"
               element={<TimeOffStatus />}

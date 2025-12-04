@@ -55,6 +55,8 @@ const ShiftForm = ({ bool, ...props }) => {
             name="title"
             value={formData.title}
             onChange={handleChange}
+            required
+            autoFocus
           />
         </div>
         <div>
@@ -64,6 +66,7 @@ const ShiftForm = ({ bool, ...props }) => {
             name="start_time"
             value={formData.start_time}
             onChange={handleChange}
+            required
           />
         </div>
         <div>
@@ -73,6 +76,7 @@ const ShiftForm = ({ bool, ...props }) => {
             name="end_time"
             value={formData.end_time}
             onChange={handleChange}
+            required
           />
         </div>
         <button type="submit">Submit</button>

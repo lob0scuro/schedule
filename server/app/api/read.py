@@ -26,7 +26,7 @@ def get_users():
     users = User.query.all()
     if not users:
         return jsonify(success=False, message="Users not found"), 404
-    return jsonify(success=True, users=[u.serialize_basic() for u in users]), 200
+    return jsonify(success=True, users=[u.serialize() for u in users]), 200
 
 @reader.route("department/<department>", methods=["GET"])
 @login_required

@@ -88,7 +88,28 @@ def create_schedule_item():
         current_app.logger.error(f"[SCHEDULE ERROR]: {e}")
         return jsonify(success=False, message="There was an error when making new schedule item."), 500
         
+
+# @creator.route("/bulk_schedule", methods=["POST"])
+# @login_required
+# def create_bulk_schedule():
+#     data = request.json.get("schedules", [])
+    
+#     try:
+#         for item in data:
+#             schedule = Schedule(
+#                 user_id=item["user_id"],
+#                 shift_id=item["shift_id"],
+#                 shift_date=item["shift_date"],
+#                 location=item["location"]
+#             )
+#             db.session.add(schedule)
+#         db.session.commit()
         
+#         return jsonify(success=True, message="Schedules submitted!"), 201
+#     except Exception as e:
+#         current_app.logger.error(f"[BULK SCHEDULE ERROR]: {e}")
+#         return jsonify(success=False, message="There was an error when submitting schedule."), 500
+
 #--------------------
 #   BULK SCHEDULE COMMIT
 #--------------------

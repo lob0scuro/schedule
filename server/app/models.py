@@ -1,7 +1,7 @@
 from app.extensions import db
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime, Date, Time, Enum as sqlEnum, func, desc
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime, Date, Time, Enum as sqlEnum, func, desc, and_ 
+from sqlalchemy.orm import relationship, foreign
 from datetime import datetime, time
 from enum import Enum
 
@@ -41,7 +41,10 @@ class User(db.Model, UserMixin):
     
     schedules = relationship("Schedule", backref="user", lazy=True)
     availability = relationship("Availability", backref="user", lazy=True)
-    time_off_requests = relationship("TimeOffRequest", backref="user", lazy=True)
+    time_off_requests = relationship("TimeOffRequest", primaryjoin=lambda: and_(
+            User.id == foreign(TimeOffRequest.user_id),
+            TimeOffRequest.status == TimeOffStatusEnum.APPROVED
+        ), backref="user", lazy=True)
     
     def serialize_basic(self):
         return {

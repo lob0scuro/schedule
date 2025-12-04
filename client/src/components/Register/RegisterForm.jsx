@@ -63,12 +63,19 @@ const RegisterForm = ({ bool }) => {
   };
 
   return (
-    <div className={styles.registerFormMasterBlock}>
+    <div
+      className={bool ? styles.importUserForm : styles.registerFormMasterBlock}
+    >
       <h2>Registration</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="role">Role</label>
-          <select name="role" value={formData.role} onChange={handleChange}>
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            autoFocus
+          >
             <option value="">--select role--</option>
             {Object.entries(ROLES).map(([key, value], index) => (
               <option value={key} key={index}>

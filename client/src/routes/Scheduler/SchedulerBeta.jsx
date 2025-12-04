@@ -6,9 +6,11 @@ import {
   changeMonth,
   convertDate,
   convertTime,
+  formatDate,
   getWorkWeekFromDate,
+  suffix,
 } from "../../utils/Helpers";
-import { getShifts, getUsers } from "../../utils/API";
+import { getShifts, getUsers, getSchedules } from "../../utils/API";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,16 +21,21 @@ import {
 import {
   faBackwardStep,
   faCalendarWeek,
+  faEllipsis,
   faForwardStep,
+  faNotdef,
   faTrash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import RegisterForm from "../../components/Register/RegisterForm";
 import ShiftForm from "../../components/Shift/ShiftForm";
+import { clsx } from "clsx";
+import { useNavigate } from "react-router-dom";
 
 const SchedulerBeta = () => {
   const today = new Date();
+  const navigate = useNavigate();
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
   const [departments, setDepartments] = useState({
     sales: [],
@@ -38,10 +45,13 @@ const SchedulerBeta = () => {
     office: [],
     all: [],
   });
-  const [addingEmployee, setAddingEmployee] = useState(false);
   const [shifts, setShifts] = useState([]);
-  const [addingShift, setAddingShift] = useState(false);
+  const [schedules, setSchedules] = useState([]);
   const [selectedDpt, setSelectedDpt] = useState("all");
+  const [selectedShift, setSelectedShift] = useState("");
+  const [addingEmployee, setAddingEmployee] = useState(false);
+  const [addingShift, setAddingShift] = useState(false);
+  const [pendingAssignments, setPendingAssignments] = useState({});
 
   useEffect(() => {
     const shiftGet = async () => {
@@ -53,7 +63,6 @@ const SchedulerBeta = () => {
       setShifts(shiftList.shifts);
     };
     shiftGet();
-    console.log(currentWeek);
   }, [addingShift]);
 
   useEffect(() => {
@@ -75,7 +84,49 @@ const SchedulerBeta = () => {
     };
 
     usersGet();
+  }, [addingEmployee]);
+
+  useEffect(() => {
+    const scheduleGet = async () => {
+      const scheduleList = await getSchedules();
+      if (!scheduleList.success) {
+        toast.error(scheduleList.message);
+        return;
+      }
+      setShifts(scheduleList.schedules);
+    };
+    scheduleGet();
   }, []);
+
+  //GENERATE SCHEDULE ROWS [USER ID, ...WEEKDAYS]
+  const scheduleRows = useMemo(() => {
+    return departments[selectedDpt].map((user) => {
+      return currentWeek.map((day) => {
+        const dateStr = formatDate(day);
+
+        const key = `${user.id}|${dateStr}`;
+        const pending = pendingAssignments[key];
+
+        const scheduledShift = schedules.find(
+          (s) => s.user_id === user.id && shift_date === dateStr
+        );
+
+        const timeOffRequest = user.time_off_requests?.find(
+          (req) => req.start_date <= dateStr && dateStr <= req.end_date
+        );
+
+        return {
+          user_id: user.id,
+          date: day,
+          shift_id: pending?.shift_id ?? scheduledShift?.shift_id ?? null,
+          location:
+            pending?.location ?? scheduledShift?.location ?? "lake_charles",
+          is_time_off: !!timeOffRequest,
+          time_off_request: timeOffRequest || null,
+        };
+      });
+    });
+  }, [departments, selectedDpt, currentWeek]);
 
   // Week header (handles month boundaries)
   const getWeekHeader = () => {
@@ -88,19 +139,102 @@ const SchedulerBeta = () => {
       : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
   };
 
+  // Helper: Build Mon-Sat week from a Monday
+  const buildWeekFromMonday = (monday) => {
+    const week = [];
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      week.push(d);
+    }
+    return week;
+  };
+
+  //
+  // WEEK CONTROLS
+  //
+  const goPrev = () => {
+    const prevMonday = new Date(currentWeek[0]);
+    prevMonday.setDate(prevMonday.getDate() - 7);
+    setCurrentWeek(buildWeekFromMonday(prevMonday));
+  };
+
+  const goToday = () => {
+    setCurrentWeek(getWorkWeekFromDate(today));
+  };
+
+  const goNext = () => {
+    const nextMonday = new Date(currentWeek[0]);
+    nextMonday.setDate(nextMonday.getDate() + 7);
+    setCurrentWeek(buildWeekFromMonday(nextMonday));
+  };
+
+  const handleCellClick = (cell) => {
+    if (!selectedShift) {
+      toast.error("Select a shift first");
+      return;
+    }
+    if (cell.is_time_off) {
+      toast.error("Employee has approved time off");
+      return;
+    }
+
+    const key = `${cell.user_id}|${formatDate(cell.date)}`;
+
+    const newAssignment = {
+      user_id: cell.user_id,
+      shift_id: selectedShift,
+      shift_date: formatDate(cell.date),
+      location: cell.location,
+    };
+
+    setPendingAssignments((prev) => ({
+      ...prev,
+      [key]: newAssignment,
+    }));
+  };
+
+  const submitSchedule = async () => {
+    const assignments = Object.values(pendingAssignments);
+
+    if (assignments.length === 0) {
+      toast.error("No changes to submit");
+      return;
+    }
+
+    const response = await fetch("/api/create/bulk_schedule", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ schedules: assignments }),
+    });
+    const data = await response.json();
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+
+    toast.success(data.message);
+
+    setPendingAssignments({});
+    //refreshSchedules()
+  };
+
   return (
     <div className={styles.schedulerMaster}>
       <div className={styles.controlBar}>
         <div className={styles.cbRow1}>
           <p>{getWeekHeader()}</p>
           <div className={styles.weekShift}>
-            <button>
+            <button onClick={goPrev}>
               <FontAwesomeIcon icon={faBackwardStep} />
             </button>
-            <button>
+            <button onClick={goToday}>
               <FontAwesomeIcon icon={faCalendarWeek} />
             </button>
-            <button>
+            <button onClick={goNext}>
               <FontAwesomeIcon icon={faForwardStep} />
             </button>
           </div>
@@ -118,8 +252,14 @@ const SchedulerBeta = () => {
             ))}
           </select>
           <div className={styles.shiftControls}>
-            {shifts.map(({ id, title, start_time, end_time }) => (
-              <button key={id}>{title}</button>
+            {shifts?.map(({ id, title, start_time, end_time }) => (
+              <button
+                key={id}
+                onClick={() => setSelectedShift(id)}
+                className={selectedShift === id ? styles.selectedShift : ""}
+              >
+                {title}
+              </button>
             ))}
           </div>
           <button
@@ -136,9 +276,98 @@ const SchedulerBeta = () => {
         </div>
       </div>
       <div className={styles.scheduleBlock}>
-        {departments[selectedDpt].map(({ id, first_name, last_name }) => (
-          <p key={id}>{first_name}</p>
+        <div className={styles.scheduleHeader}>
+          <div
+            className={clsx(styles.gridCell, [
+              styles.employeeHeader,
+              styles.gridHeader,
+            ])}
+          >
+            <h3>Employee</h3>
+          </div>
+          {currentWeek.map((day, i) => (
+            <div
+              key={i}
+              className={clsx(styles.gridCell, [
+                styles.dateCellHeader,
+                styles.gridHeader,
+              ])}
+            >
+              <span>{WEEKDAY[day.getDay()]}</span>
+              <span>
+                {MONTH_NAMES[day.getMonth()]}{" "}
+                {day.getDate() + suffix(day.getDate())}
+              </span>
+            </div>
+          ))}
+        </div>
+        {scheduleRows.map((userRow, rowIndex) => (
+          <div className={styles.userRow} key={rowIndex}>
+            {/* Employee Name */}
+            <div className={clsx(styles.gridCell, [styles.employeeCell])}>
+              <h4>
+                <div>
+                  <span>
+                    <FontAwesomeIcon icon={faUser} />
+                  </span>
+                  <span>
+                    {
+                      departments[selectedDpt].find(
+                        (u) => u.id === userRow[0].user_id
+                      )?.first_name
+                    }{" "}
+                    {
+                      departments[selectedDpt].find(
+                        (u) => u.id === userRow[0].user_id
+                      )?.last_name[0]
+                    }
+                    {"."}
+                  </span>
+                </div>
+                <div>
+                  <FontAwesomeIcon
+                    icon={faEllipsis}
+                    onClick={() => navigate(`/user/${userRow[0].user_id}`)}
+                  />
+                </div>
+              </h4>
+            </div>
+            {/* Day Cells */}
+            {userRow.map((cell, cellIndex) => (
+              <div
+                className={clsx(styles.gridCell, [
+                  cell.is_time_off ? styles.timeOffCell : "",
+                  styles.dateCell,
+                ])}
+                key={cellIndex}
+              >
+                {cell.is_time_off ? (
+                  <FontAwesomeIcon icon={faNotdef} />
+                ) : (
+                  <FontAwesomeIcon icon={faSquarePlus} />
+                )}
+              </div>
+            ))}
+          </div>
         ))}
+        <div className={styles.scheduleFooter}>
+          {addingEmployee && (
+            <div className={styles.sfUserForm}>
+              <RegisterForm bool={setAddingEmployee} />
+            </div>
+          )}
+          <button
+            className={styles.footerCell}
+            onClick={() => setAddingEmployee(!addingEmployee)}
+            style={{ color: addingEmployee ? "#fefefe" : "" }}
+          >
+            <FontAwesomeIcon icon={faUserPlus} />
+          </button>
+          {currentWeek.map((day, index) => (
+            <div key={index} className={styles.footerCell}></div>
+          ))}
+          <button className={styles.submitShiftButton}>Submit Shift</button>
+        </div>
       </div>
     </div>
   );
