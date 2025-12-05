@@ -1,179 +1,155 @@
 import styles from "./Scheduler.module.css";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import {
-  WEEKDAY,
   MONTH_NAMES,
+  WEEKDAY,
+  changeMonth,
+  convertDate,
+  convertTime,
+  formatDate,
   getWorkWeekFromDate,
   suffix,
-  convertTime,
 } from "../../utils/Helpers";
+import { getShifts, getUsers, getSchedules } from "../../utils/API";
+import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus, faUser } from "@fortawesome/free-regular-svg-icons";
+import {
+  faClock,
+  faSquarePlus,
+  faUser,
+} from "@fortawesome/free-regular-svg-icons";
 import {
   faBackwardStep,
+  faCalendarWeek,
+  faEllipsis,
   faForwardStep,
+  faNotdef,
   faTrash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import RegisterForm from "../../components/Register/RegisterForm";
 import ShiftForm from "../../components/Shift/ShiftForm";
-import toast from "react-hot-toast";
+import { clsx } from "clsx";
+import { useNavigate } from "react-router-dom";
 
-const DraggableShift = ({ id, data, children }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-    data,
-  });
-
-  const style = {
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : "none",
-    cursor: "grab",
-  };
-
-  return (
-    <button ref={setNodeRef} {...listeners} {...attributes} style={style}>
-      {children}
-    </button>
-  );
-};
-
-const DroppableCell = ({ id, assignments, shifts }) => {
-  const { isOver, setNodeRef } = useDroppable({ id });
-  const shiftMap = useMemo(() => {
-    const map = {};
-    shifts.forEach((s) => (map[s.id] = s));
-    return map;
-  }, [shifts]);
-
-  const assignedShiftID = assignments?.[id];
-  const assignedShift = assignedShiftID ? shiftMap[assignedShiftID] : null;
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        background: isOver ? "var(--linkText)" : "transparent",
-        color: isOver ? "var(--secondary)" : "var(--primary)",
-        padding: "4px",
-        borderRadius: "4px",
-        minHeight: "30px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {assignedShift ? (
-        <DraggableShift
-          id={`assigned-${id}`}
-          data={{ shiftID: assignedShift.id, sourceCell: id }}
-        >
-          <span className={styles.shiftBadge}>
-            [{convertTime(assignedShift.start_time)} -{" "}
-            {convertTime(assignedShift.end_time)}]
-          </span>
-        </DraggableShift>
-      ) : (
-        <FontAwesomeIcon icon={faSquarePlus} />
-      )}
-    </div>
-  );
-};
-
-const DroppableTrash = ({ onDelete }) => {
-  const { isOver, setNodeRef } = useDroppable({ id: "trash" });
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        background: isOver ? "red" : "transparent",
-        color: isOver ? "white" : "var(--primary)",
-        padding: "8px",
-        borderRadius: "4px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <FontAwesomeIcon icon={faTrash} className={styles.trashShift} />
-    </div>
-  );
-};
-
-/*
-   MAIN SCHEDULER COMPONENT
-*/
 const Scheduler = () => {
   const today = new Date();
+  const navigate = useNavigate();
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
-  const [chosenTeam, setChosenTeam] = useState("all");
-  const [assignments, setAssignments] = useState({});
-  const [addingUser, setAddingUser] = useState(false);
-  const [addingShift, setAddingShift] = useState(false);
   const [departments, setDepartments] = useState({
-    office: [],
     sales: [],
     service: [],
     cleaner: [],
     technician: [],
+    office: [],
     all: [],
   });
   const [shifts, setShifts] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [selectedDpt, setSelectedDpt] = useState("all");
+  const [selectedShift, setSelectedShift] = useState("");
+  const [addingEmployee, setAddingEmployee] = useState(false);
+  const [addingShift, setAddingShift] = useState(false);
+  const [pendingAssignments, setPendingAssignments] = useState({});
 
-  //
-  //LOAD DEPARTMENTS
-  //
   useEffect(() => {
-    const dpt = Object.keys(departments);
-    const fetchDepartments = async () => {
-      const dptKeys = Object.keys(departments);
-
-      try {
-        const promises = dptKeys.map((key) =>
-          fetch(`/api/read/department/${key}`).then((res) => res.json())
-        );
-
-        const results = await Promise.all(promises);
-
-        const newDepartments = {};
-
-        results.forEach((data, index) => {
-          const key = dptKeys[index];
-          if (!data.success) {
-            toast.error(data.message);
-            return;
-          }
-
-          newDepartments[key] = data.department;
-        });
-        setDepartments(newDepartments);
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to load departments");
-      }
-    };
-    fetchDepartments();
-  }, [addingUser]);
-
-  //
-  //  LOAD SHIFTS
-  //
-  useEffect(() => {
-    const getShifts = async () => {
-      const response = await fetch("/api/read/shifts");
-      const data = await response.json();
-      if (!data.success) {
-        toast.error(data.message);
+    const shiftGet = async () => {
+      const shiftList = await getShifts();
+      if (!shiftList.success) {
+        toast.error(shiftList.message);
         return;
       }
-      setShifts(data.shifts);
+      setShifts(shiftList.shifts);
     };
-    getShifts();
+    shiftGet();
   }, [addingShift]);
+
+  useEffect(() => {
+    const usersGet = async () => {
+      const userList = await getUsers();
+      if (!userList.success) {
+        toast.error(userList.message);
+        return;
+      }
+      setDepartments({
+        ...departments,
+        sales: userList.users.filter((u) => u.department === "sales"),
+        service: userList.users.filter((u) => u.department === "service"),
+        cleaner: userList.users.filter((u) => u.department === "cleaner"),
+        technician: userList.users.filter((u) => u.department === "technician"),
+        office: userList.users.filter((u) => u.department === "office"),
+        all: userList.users,
+      });
+    };
+
+    usersGet();
+  }, [addingEmployee]);
+
+  useEffect(() => {
+    const scheduleGet = async () => {
+      const scheduleList = await getSchedules();
+      if (!scheduleList.success) {
+        toast.error(scheduleList.message);
+        return;
+      }
+      setSchedules(scheduleList.schedules);
+    };
+    scheduleGet();
+  }, []);
+
+  useEffect(() => {
+    console.log(pendingAssignments);
+  }, [pendingAssignments]);
+
+  //GENERATE SCHEDULE ROWS [USER ID, ...WEEKDAYS]
+  const scheduleRows = useMemo(() => {
+    return departments[selectedDpt].map((user) => {
+      return currentWeek.map((day) => {
+        const dateStr = formatDate(day);
+
+        const key = `${user.id}|${dateStr}`;
+        const pending = pendingAssignments[key];
+
+        const scheduledShift = schedules.find(
+          (s) => s.user_id === user.id && s.shift_date === dateStr
+        );
+
+        const state = pending
+          ? "staged"
+          : scheduledShift
+          ? "committed"
+          : "empty";
+
+        const timeOffRequest = user.time_off_requests?.find(
+          (req) => req.start_date <= dateStr && dateStr <= req.end_date
+        );
+
+        return {
+          user_id: user.id,
+          date: day,
+          shift_id: pending?.shift_id ?? scheduledShift?.shift_id ?? null,
+          schedule_id: scheduledShift?.id ?? null,
+          location:
+            pending?.location ?? scheduledShift?.location ?? "lake_charles",
+          is_time_off: !!timeOffRequest,
+          time_off_request: timeOffRequest || null,
+          status: state,
+        };
+      });
+    });
+  }, [departments, selectedDpt, currentWeek, pendingAssignments, schedules]);
+
+  // Week header (handles month boundaries)
+  const getWeekHeader = () => {
+    const start = currentWeek[0];
+    const end = currentWeek[currentWeek.length - 1];
+    const startMonth = MONTH_NAMES[start.getMonth()];
+    const endMonth = MONTH_NAMES[end.getMonth()];
+    return startMonth === endMonth
+      ? `${startMonth} ${start.getDate()} - ${end.getDate()}`
+      : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
+  };
 
   // Helper: Build Mon-Sat week from a Monday
   const buildWeekFromMonday = (monday) => {
@@ -195,168 +171,266 @@ const Scheduler = () => {
     setCurrentWeek(buildWeekFromMonday(prevMonday));
   };
 
+  const goToday = () => {
+    setCurrentWeek(getWorkWeekFromDate(today));
+  };
+
   const goNext = () => {
     const nextMonday = new Date(currentWeek[0]);
     nextMonday.setDate(nextMonday.getDate() + 7);
     setCurrentWeek(buildWeekFromMonday(nextMonday));
   };
 
-  const goToday = () => {
-    setCurrentWeek(getWorkWeekFromDate(today));
-  };
-
-  // Week header (handles month boundaries)
-  const getWeekHeader = () => {
-    const start = currentWeek[0];
-    const end = currentWeek[currentWeek.length - 1];
-    const startMonth = MONTH_NAMES[start.getMonth()];
-    const endMonth = MONTH_NAMES[end.getMonth()];
-    return startMonth === endMonth
-      ? `${startMonth} ${start.getDate()} - ${end.getDate()}`
-      : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
-  };
-
-  //
-  //   DRAG HANDLER
-  //
-  const handleDragEnd = ({ active, over }) => {
-    if (!over) return;
-
-    // const sourceCell = active.data?.current?.sourceCell;
-    const { shiftID, sourceCell } = active.data.current || {};
-
-    if (over.id === "trash" && sourceCell) {
-      setAssignments((prev) => {
-        const copy = { ...prev };
-        delete copy[sourceCell];
-        return copy;
-      });
+  const handleCellClick = (cell) => {
+    if (!selectedShift) {
+      toast.error("Select a shift first");
+      return;
+    }
+    if (cell.is_time_off) {
+      toast.error("Employee has approved time off");
       return;
     }
 
-    if (shiftID) {
-      setAssignments((prev) => ({
-        ...prev,
-        [over.id]: shiftID,
-      }));
+    const key = `${cell.user_id}|${formatDate(cell.date)}`;
+
+    const newAssignment = {
+      user_id: cell.user_id,
+      shift_id: selectedShift,
+      shift_date: formatDate(cell.date),
+      location: cell.location,
+    };
+
+    setPendingAssignments((prev) => ({
+      ...prev,
+      [key]: newAssignment,
+    }));
+  };
+
+  const submitSchedule = async () => {
+    if (!confirm("Submit Schedule?")) return;
+    const assignments = Object.values(pendingAssignments);
+
+    if (assignments.length === 0) {
+      toast.error("No changes to submit");
+      return;
+    }
+
+    const response = await fetch("/api/create/bulk_schedule", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ schedules: assignments }),
+    });
+    const data = await response.json();
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+
+    toast.success(data.message);
+
+    setPendingAssignments({});
+    //refreshSchedules()
+  };
+
+  const handleDeleteSchedule = async (cell) => {
+    if (!cell.schedule_id) return;
+
+    if (!confirm("Delete this scheduled shift?")) return;
+
+    const response = await fetch(`/api/delete/schedule/${cell.schedule_id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+
+    toast.success(data.message);
+
+    const res = await getSchedules();
+    if (res.success) {
+      setSchedules(res.schedules);
     }
   };
 
-  //
-  //   RENDER COMPONENT
-  //
+  const getShiftByID = (id) => shifts.find((s) => s.id === id);
+
   return (
-    <div className={styles.schedulerMasterBlock}>
-      <DndContext onDragEnd={handleDragEnd}>
-        {/* CONTROL BAR */}
-        <div className={styles.controlBar}>
-          <div className={styles.dateBar}>
-            <div className={styles.dateDisplay}>
-              <h3>{getWeekHeader()}</h3>
-            </div>
-            <div className={styles.weekRoller}>
-              <button onClick={goPrev}>
-                <FontAwesomeIcon icon={faBackwardStep} />
-              </button>
-              <button onClick={goToday}>This Week</button>
-              <button onClick={goNext}>
-                <FontAwesomeIcon icon={faForwardStep} />
-              </button>
-            </div>
-            <button
-              className={styles.addShiftButton}
-              onClick={() => setAddingShift(!addingShift)}
-            >
-              {addingShift ? "Close" : "Add Shift"}
+    <div className={styles.schedulerMaster}>
+      <div className={styles.controlBar}>
+        <div className={styles.cbRow1}>
+          <p>{getWeekHeader()}</p>
+          <div className={styles.weekShift}>
+            <button onClick={goPrev}>
+              <FontAwesomeIcon icon={faBackwardStep} />
             </button>
-            {addingShift && (
-              <div className={styles.shiftFormMetaBlock}>
-                <ShiftForm bool={setAddingShift} />
-              </div>
-            )}
-          </div>
-          {/* USER BAR */}
-          <div className={styles.userBar}>
-            <div className={styles.departmentSelect}>
-              <select
-                name="department"
-                value={chosenTeam || ""}
-                onChange={(e) => setChosenTeam(e.target.value)}
-              >
-                {/* <option value="all">--all departments--</option> */}
-                {Object.entries(departments).map(([department], index) => (
-                  <option value={department} key={index}>
-                    {department}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* SHIFTS */}
-            <div className={styles.shiftSelect}>
-              {shifts?.map(({ id, title }) => (
-                <DraggableShift
-                  id={`shift-${id}`}
-                  key={id}
-                  data={{ shiftID: id }}
-                >
-                  {title}
-                </DraggableShift>
-              ))}
-              <DroppableTrash />
-            </div>
+            <button onClick={goToday}>
+              <FontAwesomeIcon icon={faCalendarWeek} />
+            </button>
+            <button onClick={goNext}>
+              <FontAwesomeIcon icon={faForwardStep} />
+            </button>
           </div>
         </div>
-
-        {/* CALENDAR */}
-        <div className={styles.theCal}>
-          {chosenTeam && (
-            <div className={styles.calMainBody}>
-              <div className={styles.employeeList}>
-                <div>Employees</div>
-                {departments[chosenTeam].map(
-                  ({ first_name, last_name }, index) => (
-                    <div key={index} className={styles.employeeTile}>
-                      <FontAwesomeIcon icon={faUser} /> {first_name} {last_name}
-                    </div>
-                  )
-                )}
-                <div className={styles.addEmployee}>
-                  <button onClick={() => setAddingUser(!addingUser)}>
-                    <FontAwesomeIcon icon={faUserPlus} />
-                    Add Employee
-                  </button>
-                </div>
-              </div>
-              {/* DAYS */}
-              {currentWeek.map((day, index) => (
-                <div key={index} className={styles.dayCell}>
-                  <div className={styles.dayHeader} key={index}>
-                    {WEEKDAY[day.getDay()]},{" "}
-                    {day.getDate() + suffix(day.getDate())}
-                  </div>
-                  {/* CELLS */}
-                  {departments[chosenTeam].map(({ id: userID }) => {
-                    const cellID = `${userID}|${
-                      day.toISOString().split("T")[0]
-                    }`;
-                    return (
-                      <DroppableCell
-                        id={cellID}
-                        key={cellID}
-                        assignments={assignments}
-                        shifts={shifts}
-                      />
-                    );
-                  })}
-                  <div className={styles.spacer}></div>
-                </div>
-              ))}
+        <div className={styles.cbRow2}>
+          <select
+            name="department"
+            value={selectedDpt}
+            onChange={(e) => setSelectedDpt(e.target.value)}
+          >
+            {Object.keys(departments).map((dpt, index) => (
+              <option value={dpt} key={index}>
+                {dpt}
+              </option>
+            ))}
+          </select>
+          <div className={styles.shiftControls}>
+            {shifts?.map(({ id, title, start_time, end_time }) => (
+              <button
+                key={id}
+                onClick={() => setSelectedShift(selectedShift === id ? "" : id)}
+                className={selectedShift === id ? styles.selectedShift : ""}
+              >
+                {title}
+              </button>
+            ))}
+            <button className={styles.deleteShiftButton}>
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+          </div>
+          <button
+            className={styles.addShiftButton}
+            onClick={() => setAddingShift(!addingShift)}
+          >
+            <FontAwesomeIcon icon={faClock} />
+          </button>
+          {addingShift && (
+            <div className={styles.cbShiftForm}>
+              <ShiftForm bool={setAddingShift} />
             </div>
           )}
         </div>
-      </DndContext>
-      <div className={addingUser ? styles.addUserHere : styles.hideUserForm}>
-        <RegisterForm bool={setAddingUser} />
+      </div>
+      <div className={styles.scheduleBlock}>
+        <div className={styles.scheduleHeader}>
+          <div
+            className={clsx(styles.gridCell, [
+              styles.employeeHeader,
+              styles.gridHeader,
+            ])}
+          >
+            <h3>Employee</h3>
+          </div>
+          {currentWeek.map((day, i) => (
+            <div
+              key={i}
+              className={clsx(styles.gridCell, [
+                styles.dateCellHeader,
+                styles.gridHeader,
+              ])}
+            >
+              <span>{WEEKDAY[day.getDay()]}</span>
+              <span>
+                {MONTH_NAMES[day.getMonth()]}{" "}
+                {day.getDate() + suffix(day.getDate())}
+              </span>
+            </div>
+          ))}
+        </div>
+        {scheduleRows.map((userRow, rowIndex) => (
+          <div className={styles.userRow} key={rowIndex}>
+            {/* Employee Name */}
+            <div className={clsx(styles.gridCell, [styles.employeeCell])}>
+              <h4>
+                <div>
+                  <span>
+                    <FontAwesomeIcon icon={faUser} />
+                  </span>
+                  <span>
+                    {
+                      departments[selectedDpt].find(
+                        (u) => u.id === userRow[0].user_id
+                      )?.first_name
+                    }{" "}
+                    {
+                      departments[selectedDpt].find(
+                        (u) => u.id === userRow[0].user_id
+                      )?.last_name[0]
+                    }
+                    {"."}
+                  </span>
+                </div>
+                <div>
+                  <FontAwesomeIcon
+                    icon={faEllipsis}
+                    onClick={() => navigate(`/user/${userRow[0].user_id}`)}
+                  />
+                </div>
+              </h4>
+            </div>
+            {/* Day Cells */}
+            {userRow.map((cell, cellIndex) => (
+              <div
+                className={clsx(
+                  styles.gridCell,
+                  styles.dateCell,
+                  cell.is_time_off && styles.timeOffCell,
+                  cell.status === "staged" && styles.stagedCell,
+                  cell.status === "committed" && styles.committedCell
+                )}
+                key={cellIndex}
+                onClick={() => {
+                  if (cell.shift_id && !selectedShift) {
+                    handleDeleteSchedule(cell);
+                  } else {
+                    handleCellClick(cell);
+                  }
+                }}
+              >
+                {cell.is_time_off ? (
+                  <FontAwesomeIcon icon={faNotdef} />
+                ) : cell.shift_id ? (
+                  <span className={styles.shiftAssignedCell}>
+                    {getShiftByID(cell.shift_id)?.title || "Shift"}
+                  </span>
+                ) : (
+                  <FontAwesomeIcon icon={faSquarePlus} />
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
+        <div className={styles.scheduleFooter}>
+          {addingEmployee && (
+            <div className={styles.sfUserForm}>
+              <RegisterForm bool={setAddingEmployee} />
+            </div>
+          )}
+          <button
+            className={styles.footerCell}
+            onClick={() => setAddingEmployee(!addingEmployee)}
+            style={{
+              color: addingEmployee ? "#fefefe" : "",
+              backgroundColor: addingEmployee ? "transparent" : "",
+              fontSize: addingEmployee ? "1.5rem" : "",
+              border: "none",
+            }}
+          >
+            <FontAwesomeIcon icon={faUserPlus} />
+          </button>
+          {currentWeek.map((day, index) => (
+            <div key={index} className={styles.footerCell}></div>
+          ))}
+          <button onClick={submitSchedule} className={styles.submitShiftButton}>
+            Submit Shift
+          </button>
+        </div>
       </div>
     </div>
   );

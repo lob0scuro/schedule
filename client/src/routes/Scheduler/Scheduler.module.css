@@ -1,209 +1,260 @@
-.schedulerMasterBlock {
-  width: 100%;
-  max-width: 1200px;
+.schedulerMaster {
+  width: 80%;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  gap: 1rem;
 }
 
+/*
+    CONTROL BAR
+*/
 .controlBar {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
-  position: relative;
 }
-.controlBar .shiftFormMetaBlock {
-  position: absolute;
-  top: 50%;
-  right: 0;
+
+/*
+CONTROL BAR ROW 1
+*/
+.controlBar .cbRow1 {
   background-color: var(--primary);
-  color: var(--secondary);
-  border-radius: 16px;
-}
-.controlBar > div {
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  border: 1px solid var(--primary);
-  height: 4rem;
-  padding-inline: 1rem;
-}
-.controlBar > div:first-child {
-  border-radius: 18px 18px 0 0;
-  border-bottom: none;
+  padding: 1rem;
 }
 
-.controlBar button:hover {
-  background-color: var(--primary);
-  color: var(--accent);
-}
-.controlBar div button:hover {
-  background-color: var(--primary);
-  color: var(--accent);
+.controlBar .cbRow1 > p {
+  font-size: 1.4rem;
+  font-weight: 800;
 }
 
-.dateDisplay {
-  margin: 0;
-}
-
-.weekRoller {
+.controlBar .cbRow1 .weekShift {
   display: flex;
+  align-items: center;
   justify-content: center;
   border-radius: 12px;
 }
 
-.weekRoller button {
-  font-size: 20px;
-  background-color: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  padding: 4px 10px;
+.controlBar .cbRow1 .weekShift button {
+  font-size: 1.5rem;
+  padding: 6px 12px;
+  background-color: var(--linkText);
+  color: #fefefe;
 }
-.weekRoller button:first-child {
+
+.controlBar .cbRow1 .weekShift button:first-child {
   border-radius: 12px 0 0 12px;
 }
-.weekRoller button:last-child {
+.controlBar .cbRow1 .weekShift button:nth-child(2) {
+  padding-inline: 24px;
+}
+.controlBar .cbRow1 .weekShift button:last-child {
   border-radius: 0 12px 12px 0;
 }
 
-.controlBar button.addShiftButton {
-  font-size: 20px;
-  background-color: var(--primary);
-  color: var(--secondary);
+/*
+    CONTROL BAR ROW 2
+*/
+.controlBar .cbRow2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-top: 1px solid #333;
+  position: relative;
+}
+
+.controlBar .cbRow2 select {
+  width: fit-content;
+  height: 34px;
+}
+
+.controlBar .cbRow2 .shiftControls {
+  flex: 1;
+  padding-inline: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.controlBar .cbRow2 .shiftControls button {
+  background-color: var(--linkText);
+  color: var(--accent);
+  font-size: 1rem;
   border: none;
-  padding: 4px 12px;
-  border-radius: 12px;
-  box-shadow: -1px 1px 4px #000;
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+.controlBar .cbRow2 .shiftControls button.selectedShift {
+  background-color: var(--primary);
+}
+.controlBar .cbRow2 button.addShiftButton {
+  background-color: darkgreen;
+  color: #fefefe;
+  font-size: 1.4rem;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: -1px 1px 3px #333;
+}
+
+.controlBar .cbRow2 .shiftControls button.deleteShiftButton {
+  background-color: darkred;
+}
+
+.cbShiftForm {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--primary);
+  color: #fefefe;
+  z-index: 100;
+  transition: all 2s ease;
 }
 
 /*
-    CONTROL BAR LAYER 2
+   SCHEDULE BLOCK
 */
 
-.userBar div.departmentSelect select {
-  font-size: 18px;
-  padding: 2px;
-  border-radius: 8px;
-  color: var(--primary);
-  height: 32px;
+.scheduleBlock {
+  width: 100%;
+  border: 1px solid var(--primary);
+  display: flex;
+  flex-direction: column;
 }
 
-.userBar .shiftSelect {
+.scheduleHeader {
   display: flex;
+  background-color: var(--linkText);
+  color: #fefefe;
+  border: 1px solid var(--linkText);
+}
+
+.scheduleFooter {
+  background-color: var(--linkText);
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.scheduleFooter .footerCell {
+  flex: 1;
+}
+.scheduleFooter button:first-child {
+  font-size: 1.5rem;
+  background-color: transparent;
+  border-radius: 2px;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+}
+.scheduleFooter button:first-child:hover {
+  color: #fefefe;
+}
+
+.scheduleFooter button:last-child.submitShiftButton {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  padding: 2px 10px;
+  background-color: darkgreen;
+  color: var(--accent);
+  border-radius: 8px;
+}
+.scheduleFooter button:last-child.submitShiftButton:hover {
+  background-color: green;
+}
+
+.sfUserForm {
+  position: absolute;
+  background-color: var(--linkText);
+  border: 6px solid var(--primary);
+  width: fit-content;
+  padding: 1rem;
+  bottom: 0;
+  right: 0;
+  border-radius: 12px;
+  box-shadow: -2px 2px 8px #333;
+  z-index: 100;
+}
+.sfUserForm .importUserForm form h2 {
+  color: red;
+}
+
+.scheduleBlock .userRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gridCell {
+  border: 1px solid var(--primary);
+  min-height: 60px;
+  flex: 1;
+}
+
+.gridCell.committedCell {
+  font-weight: 800;
+}
+
+.gridCell.stagedCell {
+  font-style: italic;
+  text-decoration: underline;
+}
+
+.gridCell:not(.employeeCell):hover,
+span:hover {
+  background-color: var(--primary);
+  color: var(--secondary);
+}
+
+.gridCell.employeeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gridCell.dateCellHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+}
+
+.gridCell.employeeCell {
+  display: flex;
+  justify-content: center;
   align-items: center;
   gap: 10px;
 }
 
-.userBar .shiftSelect button {
-  padding: 2px 8px;
-  border: 1px solid var(--primary);
-  border-radius: 4px;
-  font-size: 18px;
-  background-color: var(--secondary);
-  color: var(--primary);
-  box-shadow: -1px 1px 4px var(--primary);
-}
-
-.trashShift {
-  font-size: 1.2rem;
-  color: var(--accent);
-  border: 1px solid red;
-  padding: 4px;
-  border-radius: 4px;
-  box-shadow: -1px 1px 2px red;
-  background-color: darkred;
-}
-
-/*
-   CALENDAR VIEW
-*/
-
-.theCal {
+.gridCell.employeeCell h4 {
   width: 100%;
+  padding: 4px 8px;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
-
-.calMainBody {
-  width: 100%;
-  display: flex;
+.gridCell.employeeCell h4 div:last-child {
+  font-size: 1.4rem;
+}
+.gridCell.employeeCell h4 div:last-child svg:hover {
+  color: var(--linkText);
 }
 
-.calMainBody > div {
-  border: 1px solid var(--primary);
-  flex: 1;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.calMainBody > div:first-child > div {
-  align-self: flex-start;
-  display: flex;
-  justify-content: flex-start;
-}
-.calMainBody > div > div:first-child {
-  flex: 0.5;
-  border-bottom: 2px solid var(--primary);
-  width: 100%;
-  background-color: var(--primary);
-  color: var(--accent);
-  padding: 4px 2px;
-}
-.calMainBody > div > div {
-  flex: 1;
-  width: 100%;
+.gridCell.dateCell {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60px;
+}
+.gridCell.dateCell svg {
+  font-size: 1.4rem;
+  color: var(--linkText);
 }
 
-.employeeList > div.addEmployee {
-  background-color: var(--primary);
-}
-.employeeList > div.addEmployee button {
-  background-color: transparent;
-  /* border: inset 1px solid var(--bannerBackground); */
-  color: var(--secondary);
-  border: none;
-  height: 100%;
-  width: 100%;
-  text-decoration: underline;
-}
-
-.dayCell > div.spacer {
-  background-color: var(--linkText);
-}
-
-.dayCell button {
-  background-color: transparent;
-  border: 1px solid var(--primary);
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.addUserHere {
-  width: 50%;
-  border: 8px solid var(--primary);
-  border-radius: 18px;
-  background-color: var(--linkText);
-  color: var(--secondary);
-  position: absolute;
-  right: 0;
-  z-index: 1000;
-}
-.addUserHere div {
-  width: 100%;
-}
-
-.hideUserForm {
-  position: absolute;
-  right: 100vw;
+.gridCell.timeOffCell svg {
+  color: darkred;
 }

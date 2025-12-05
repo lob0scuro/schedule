@@ -10,11 +10,10 @@ import Home from "./routes/Home/Home";
 import ProtectedLayout from "./layout/ProtectedLayout";
 import LoginForm from "./components/Login/LoginForm";
 import RegisterForm from "./components/Register/RegisterForm";
-import Scheduler from "./routes/Scheduler/Scheduler";
 import TimeOffRequest from "./routes/TimeOffRequest/TimeOffRequest";
 import AdminLayout from "./layout/AdminLayout";
 import TimeOffStatus from "./routes/TimeOffRequest/Status/TimeOffStatus";
-import SchedulerBeta from "./routes/Scheduler/SchedulerBeta";
+import Scheduler from "./routes/Scheduler/Scheduler";
 import UserProfile from "./routes/User/UserProfile";
 
 const App = () => {
@@ -28,7 +27,6 @@ const App = () => {
           <Route path="time-off-request" element={<TimeOffRequest />} />
           <Route element={<AdminLayout />}>
             <Route path="scheduler" element={<Scheduler />} />
-            <Route path="beta" element={<SchedulerBeta />} />
             <Route path="user/:id" element={<UserProfile />} />
             <Route
               path="time-off-requests-status"

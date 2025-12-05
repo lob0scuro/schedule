@@ -63,8 +63,9 @@ select {
 
 .importUserForm form {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   column-gap: 1.5rem;
+  row-gap: 1rem;
 }
 
 .importUserForm form div {
@@ -75,17 +76,17 @@ select {
 
 .importUserForm form div input,
 select {
-  width: fit-content;
-  height: 30px;
+  height: 38px;
   font-size: 18px;
 }
 
 .importUserForm form button[type="submit"] {
-  /* grid-column-start: 1;
-  grid-column-end: 3; */
+  grid-column-start: 1;
+  grid-column-end: 3;
   background-color: var(--primary);
   color: #fefefe;
   margin: 20px 0;
   border-radius: 8px;
-  padding: 10px 0;
+  padding: 15px 0;
+  font-size: 1.4rem;
 }
