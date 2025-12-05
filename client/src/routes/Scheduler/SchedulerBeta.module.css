@@ -93,7 +93,6 @@ CONTROL BAR ROW 1
 }
 .controlBar .cbRow2 .shiftControls button.selectedShift {
   background-color: var(--primary);
-  border: 2px solid var(--primary);
 }
 .controlBar .cbRow2 button.addShiftButton {
   background-color: darkgreen;
@@ -103,6 +102,10 @@ CONTROL BAR ROW 1
   border-radius: 8px;
   padding: 6px;
   box-shadow: -1px 1px 3px #333;
+}
+
+.controlBar .cbRow2 .shiftControls button.deleteShiftButton {
+  background-color: darkred;
 }
 
 .cbShiftForm {
@@ -192,6 +195,21 @@ CONTROL BAR ROW 1
   border: 1px solid var(--primary);
   min-height: 60px;
   flex: 1;
+}
+
+.gridCell.committedCell {
+  font-weight: 800;
+}
+
+.gridCell.stagedCell {
+  font-style: italic;
+  text-decoration: underline;
+}
+
+.gridCell:not(.employeeCell):hover,
+span:hover {
+  background-color: var(--primary);
+  color: var(--secondary);
 }
 
 .gridCell.employeeHeader {

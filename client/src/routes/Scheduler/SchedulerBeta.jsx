@@ -115,6 +115,12 @@ const SchedulerBeta = () => {
           (s) => s.user_id === user.id && s.shift_date === dateStr
         );
 
+        const state = pending
+          ? "staged"
+          : scheduledShift
+          ? "committed"
+          : "empty";
+
         const timeOffRequest = user.time_off_requests?.find(
           (req) => req.start_date <= dateStr && dateStr <= req.end_date
         );
@@ -123,10 +129,12 @@ const SchedulerBeta = () => {
           user_id: user.id,
           date: day,
           shift_id: pending?.shift_id ?? scheduledShift?.shift_id ?? null,
+          schedule_id: scheduledShift?.id ?? null,
           location:
             pending?.location ?? scheduledShift?.location ?? "lake_charles",
           is_time_off: !!timeOffRequest,
           time_off_request: timeOffRequest || null,
+          status: state,
         };
       });
     });
@@ -227,6 +235,30 @@ const SchedulerBeta = () => {
     //refreshSchedules()
   };
 
+  const handleDeleteSchedule = async (cell) => {
+    if (!cell.schedule_id) return;
+
+    if (!confirm("Delete this scheduled shift?")) return;
+
+    const response = await fetch(`/api/delete/schedule/${cell.schedule_id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+
+    toast.success(data.message);
+
+    const res = await getSchedules();
+    if (res.success) {
+      setSchedules(res.schedules);
+    }
+  };
+
   const getShiftByID = (id) => shifts.find((s) => s.id === id);
 
   return (
@@ -268,6 +300,9 @@ const SchedulerBeta = () => {
                 {title}
               </button>
             ))}
+            <button className={styles.deleteShiftButton}>
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
           </div>
           <button
             className={styles.addShiftButton}
@@ -342,12 +377,21 @@ const SchedulerBeta = () => {
             {/* Day Cells */}
             {userRow.map((cell, cellIndex) => (
               <div
-                className={clsx(styles.gridCell, [
-                  cell.is_time_off ? styles.timeOffCell : "",
+                className={clsx(
+                  styles.gridCell,
                   styles.dateCell,
-                ])}
+                  cell.is_time_off && styles.timeOffCell,
+                  cell.status === "staged" && styles.stagedCell,
+                  cell.status === "committed" && styles.committedCell
+                )}
                 key={cellIndex}
-                onClick={() => handleCellClick(cell)}
+                onClick={() => {
+                  if (cell.shift_id && !selectedShift) {
+                    handleDeleteSchedule(cell);
+                  } else {
+                    handleCellClick(cell);
+                  }
+                }}
               >
                 {cell.is_time_off ? (
                   <FontAwesomeIcon icon={faNotdef} />

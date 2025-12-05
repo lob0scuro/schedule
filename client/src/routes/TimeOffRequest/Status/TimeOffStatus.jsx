@@ -20,15 +20,9 @@ const TimeOffStatus = () => {
         return;
       }
       setRo({
-        pending: [
-          ...data.time_off_requests.filter((t) => t.status === "pending"),
-        ],
-        approved: [
-          ...data.time_off_requests.filter((t) => t.status === "approved"),
-        ],
-        denied: [
-          ...data.time_off_requests.filter((t) => t.status === "denied"),
-        ],
+        pending: [...data.time_off_requests.pending],
+        approved: [...data.time_off_requests.approved],
+        denied: [...data.time_off_requests.denied],
       });
     };
 

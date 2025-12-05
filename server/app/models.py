@@ -159,7 +159,7 @@ class TimeOffRequest(db.Model):
     end_date = Column(Date, nullable=False)
     reason = Column(String(255), nullable=False)
     status = Column(sqlEnum(TimeOffStatusEnum), default=TimeOffStatusEnum.PENDING, nullable=False)
-    
+        
     def serialize(self):
         return {
             "id": self.id,
@@ -169,8 +169,8 @@ class TimeOffRequest(db.Model):
             "reason": self.reason,
             "status": self.status.value,
             "user": {
-                "first_name": self.user.first_name,
-                "last_name": self.user.last_name,
-                "department": self.user.department.value
+                "first_name": self.user.first_name if self.user else None,
+                "last_name": self.user.last_name if self.user else None,
+                "department": self.user.department.value if self.user else None,
             }
         }
