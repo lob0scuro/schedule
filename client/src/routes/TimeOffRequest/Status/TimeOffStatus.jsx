@@ -58,7 +58,7 @@ const TimeOffStatus = () => {
                 <li key={id}>
                   <div>
                     <h4>
-                      {user.first_name} {user.last_name[0]}.
+                      {user.first_name} {user.last_name}.
                     </h4>
                     <p>Start Date: {convertDate(start_date)}</p>
                     <p>End Date: {convertDate(end_date)}</p>
@@ -94,7 +94,7 @@ const TimeOffStatus = () => {
                 <li key={id}>
                   <div>
                     <h4>
-                      {user.first_name} {user.last_name[0]}.
+                      {user.first_name} {user.last_name}.
                     </h4>
                     <p>reason: {reason}</p>
                     <p>Start Date: {convertDate(start_date)}</p>
@@ -127,7 +127,7 @@ const TimeOffStatus = () => {
                 <li key={id}>
                   <div>
                     <h4>
-                      {user.first_name} {user.last_name[0]}.
+                      {user.first_name} {user.last_name}.
                     </h4>
                     <p>reason: {reason}</p>
                     <p>Start Date: {convertDate(start_date)}</p>

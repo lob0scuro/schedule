@@ -231,8 +231,11 @@ const Scheduler = () => {
 
     toast.success(data.message);
 
+    const refreshSchedule = await getSchedules();
+    if (refreshSchedule.success) {
+      setSchedules(refreshSchedule.schedules);
+    }
     setPendingAssignments({});
-    //refreshSchedules()
   };
 
   const handleDeleteSchedule = async (cell) => {
@@ -257,6 +260,41 @@ const Scheduler = () => {
     if (res.success) {
       setSchedules(res.schedules);
     }
+  };
+
+  const ClearWeek = async () => {
+    if (!confirm("Clear all schedules for this week?")) return;
+
+    const start = formatDate(currentWeek[0]);
+    const end = formatDate(currentWeek[currentWeek.length - 1]);
+
+    const response = await fetch("api/delete/scheduled_week", {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        start_date: start,
+        end_date: end,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+
+    toast.success(data.message + " " + "Refresh screen to reflect changes");
+
+    const newSchedules = await getSchedules();
+    if (newSchedules.success) {
+      setSchedules(newSchedules.schedules);
+    }
+
+    setPendingAssignments({});
   };
 
   const getShiftByID = (id) => shifts.find((s) => s.id === id);
@@ -300,7 +338,12 @@ const Scheduler = () => {
                 {title}
               </button>
             ))}
-            <button className={styles.deleteShiftButton}>
+            <button
+              className={styles.deleteShiftButton}
+              onClick={ClearWeek}
+              disabled={schedules.length === 0}
+            >
+              Clear Schedule
               <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>

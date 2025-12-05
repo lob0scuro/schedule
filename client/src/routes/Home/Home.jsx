@@ -1,9 +1,6 @@
 import Calendar from "../../components/Calendar/Calendar";
 import styles from "./Home.module.css";
 import React from "react";
-import RegisterForm from "../../components/Register/RegisterForm";
-import LoginForm from "../../components/Login/LoginForm";
-import TimeOffRequest from "../TimeOffRequest/TimeOffRequest";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 
@@ -21,6 +18,7 @@ const Home = () => {
           </>
         )}
         <Link to={"/time-off-request"}>Time Off Request</Link>
+        <Link to={"/view-schedule"}>View Schedule</Link>
       </div>
     </div>
   );

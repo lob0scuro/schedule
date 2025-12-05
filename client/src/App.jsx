@@ -15,6 +15,7 @@ import AdminLayout from "./layout/AdminLayout";
 import TimeOffStatus from "./routes/TimeOffRequest/Status/TimeOffStatus";
 import Scheduler from "./routes/Scheduler/Scheduler";
 import UserProfile from "./routes/User/UserProfile";
+import ViewSchedule from "./routes/User/ViewUserSchedule/ViewSchedule";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -25,6 +26,7 @@ const App = () => {
         <Route element={<ProtectedLayout />}>
           <Route index element={<Home />} />
           <Route path="time-off-request" element={<TimeOffRequest />} />
+          <Route path="view-schedule" element={<ViewSchedule />} />
           <Route element={<AdminLayout />}>
             <Route path="scheduler" element={<Scheduler />} />
             <Route path="user/:id" element={<UserProfile />} />

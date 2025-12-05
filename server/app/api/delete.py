@@ -30,6 +30,33 @@ def delete_schedule(id):
     db.session.commit()
     return jsonify(success=True, message="Schedule has been deleted."), 200
 
+@deleter.route("/scheduled_week", methods=["DELETE"])
+@login_required
+def clear_week():
+    data = request.get_json()
+    start_date = data.get("start_date")
+    end_date = data.get("end_date")
+    
+    if not start_date or not end_date:
+        return jsonify(success=False, message="Missing date range"), 400
+    
+    try:
+        start = date.fromisoformat(start_date)
+        end = date.fromisoformat(end_date)
+        
+        deleted = Schedule.query.filter(
+            Schedule.shift_date >= start_date,
+            Schedule.shift_date <= end_date
+        ).delete(synchronize_session=False)
+        
+        db.session.commit()
+        
+        return jsonify(success=True, message=f"Deleted {deleted} schedules from {start_date} to {end_date}"), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"[BULK SCHEDULE DELETE ERROR]: {e}")
+        return jsonify(success=False, message="There was an error when deleting schedule week"), 500
+
 @deleter.route("/shift/<int:id>", methods=["DELETE"])
 @login_required
 def delete_shift(id):

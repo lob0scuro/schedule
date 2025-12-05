@@ -73,7 +73,7 @@ const UserProfile = () => {
       }
       toast.success(data.message);
       if (!editing) {
-        navigate("/beta");
+        navigate("/scheduler");
       }
       setEditing(false);
     } catch (error) {
@@ -107,7 +107,7 @@ const UserProfile = () => {
             onChange={handleChange}
           />
         ) : (
-          formData.first_name
+          <span>{formData.first_name}</span>
         )}
       </div>
       <div>
@@ -120,7 +120,7 @@ const UserProfile = () => {
             onChange={handleChange}
           />
         ) : (
-          formData.last_name
+          <span>{formData.last_name}</span>
         )}
       </div>
       <div>
@@ -133,7 +133,7 @@ const UserProfile = () => {
             onChange={handleChange}
           />
         ) : (
-          formData.email
+          <span>{formData.email}</span>
         )}
       </div>
       <div>
@@ -144,7 +144,7 @@ const UserProfile = () => {
             <option value="employee">Employee</option>
           </select>
         ) : (
-          formData.role
+          <span>{formData.role}</span>
         )}
       </div>
       <div>
@@ -162,7 +162,7 @@ const UserProfile = () => {
             <option value="office">Office</option>
           </select>
         ) : (
-          formData.department
+          <span>{formData.department}</span>
         )}
       </div>
       {editing && <button type="submit">Submit</button>}

@@ -120,10 +120,11 @@ def create_bulk_schedule():
             
             exists = Schedule.query.filter_by(
                 user_id=user_id,
-                shift_id=shift_id,
                 shift_date=shift_date
             ).first()
             if exists:
+                exists.shift_id = shift_id
+                exists.location = location
                 continue
             
             schedule_item = Schedule(
