@@ -196,6 +196,19 @@ const Scheduler = () => {
       location: cell.location,
     };
 
+    if (selectedShift === 9998) {
+      const startTime = prompt("Enter start time (HH:MM)");
+      const endTime = prompt("Enter end time (HH:MM)");
+
+      if (!startTime || !endTime) {
+        toast.error("Custom shifts require start and end times");
+        return;
+      }
+
+      newAssignment.custom_start_time = startTime;
+      newAssignment.custom_end_time = endTime;
+    }
+
     setPendingAssignments((prev) => ({
       ...prev,
       [key]: newAssignment,
@@ -414,35 +427,53 @@ const Scheduler = () => {
               </h4>
             </div>
             {/* Day Cells */}
-            {userRow.map((cell, cellIndex) => (
-              <div
-                className={clsx(
-                  styles.gridCell,
-                  styles.dateCell,
-                  cell.is_time_off && styles.timeOffCell,
-                  cell.status === "staged" && styles.stagedCell,
-                  cell.status === "committed" && styles.committedCell
-                )}
-                key={cellIndex}
-                onClick={() => {
-                  if (cell.shift_id && !selectedShift) {
-                    handleDeleteSchedule(cell);
-                  } else {
-                    handleCellClick(cell);
-                  }
-                }}
-              >
-                {cell.is_time_off ? (
-                  <FontAwesomeIcon icon={faNotdef} />
-                ) : cell.shift_id ? (
-                  <span className={styles.shiftAssignedCell}>
-                    {getShiftByID(cell.shift_id)?.title || "Shift"}
-                  </span>
-                ) : (
-                  <FontAwesomeIcon icon={faSquarePlus} />
-                )}
-              </div>
-            ))}
+            {userRow.map((cell, cellIndex) => {
+              const shift = getShiftByID(cell.shift_id);
+
+              let display = "";
+              if (cell.is_time_off) {
+                display = null;
+              } else if (shift) {
+                if (shift.id === 9998) {
+                  display = `${shift.title} ${
+                    (cell.custom_start_time || "--") +
+                    "-" +
+                    cell.custom_end_time
+                  }`;
+                }
+              } else if (shift.id === 9999) {
+                display = shift.title;
+              } else {
+                display = shift.title;
+              }
+              return (
+                <div
+                  className={clsx(
+                    styles.gridCell,
+                    styles.dateCell,
+                    cell.is_time_off && styles.timeOffCell,
+                    cell.status === "staged" && styles.stagedCell,
+                    cell.status === "committed" && styles.committedCell
+                  )}
+                  key={cellIndex}
+                  onClick={() => {
+                    if (cell.shift_id && !selectedShift) {
+                      handleDeleteSchedule(cell);
+                    } else {
+                      handleCellClick(cell);
+                    }
+                  }}
+                >
+                  {cell.is_time_off ? (
+                    <FontAwesomeIcon icon={faNotdef} />
+                  ) : cell.shift_id ? (
+                    <span className={styles.shiftAssignedCell}>{display}</span>
+                  ) : (
+                    <FontAwesomeIcon icon={faSquarePlus} />
+                  )}
+                </div>
+              );
+            })}
           </div>
         ))}
         <div className={styles.scheduleFooter}>
