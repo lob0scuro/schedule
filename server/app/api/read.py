@@ -77,6 +77,34 @@ def get_schedule(id):
         return jsonify(success=False, message="Schedule not found"), 404
     return jsonify(success=True, schedule=schedule.serialize()), 200
 
+@reader.route("/schedule_week/<int:id>", methods=["GET"])
+@login_required
+def schedule_week(id):
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+    
+    if not start_date or not end_date:
+        return jsonify(success=False, message="Missing date parameters."), 400
+    
+    try:
+        start = date.fromisoformat(start_date)
+        end = date.fromisoformat(end_date)
+    except ValueError:
+        return jsonify(success=False, message="Invalid date format. Use YYYY-MM-DD"), 400
+    
+    if not User.query.get(id):
+        return jsonify(success=False, message="User not found"), 404
+    
+    schedule = Schedule.query.filter(
+        Schedule.user_id == id,
+        Schedule.shift_date.between(start, end)
+    ).order_by(Schedule.shift_date.asc()).all()
+    
+    
+    return jsonify(success=True, schedule=[s.serialize() for s in schedule]), 200
+    
+    
+
 @reader.route("/schedules", methods=["GET"])
 @login_required
 def get_schedules():

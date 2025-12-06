@@ -23,6 +23,11 @@ const TimeOffRequest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.reason.trim() === "") {
+      toast.error("A reason is required");
+      return;
+    }
+    if (!confirm("Submit time off request?")) return;
 
     const payload = {
       start_date: formData.start_date,
@@ -62,6 +67,7 @@ const TimeOffRequest = () => {
             name="start_date"
             value={formData.start_date}
             onChange={handleChange}
+            required
           />
         </div>
         <div>
@@ -71,6 +77,7 @@ const TimeOffRequest = () => {
             name="end_date"
             value={formData.end_date}
             onChange={handleChange}
+            required
           />
         </div>
         {/* RADIO REASON SWITCHES */}

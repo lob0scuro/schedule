@@ -80,13 +80,21 @@ class Shift(db.Model):
     
     schedules = relationship("Schedule", backref="shift", lazy=True)
     
+    def duration(self):
+        if not self.start_time or not self.end_time:
+            return None
+        
+        start_dt = datetime.combine(datetime.today(), self.start_time)
+        end_dt = datetime.combine(datetime.today(), self.end_time)
+        
+        return (end_dt - start_dt).total_seconds() / 3600
+    
     def serialize(self):
         return {
             "id": self.id,
             "title": self.title,
             "start_time": self.start_time.strftime("%H:%M") if self.start_time else None,
             "end_time": self.end_time.strftime("%H:%M") if self.end_time else None,
-            "schedules": [s.serialize() for s in self.schedules]
         }
         
     def serialize_basic(self):
@@ -106,8 +114,12 @@ class Schedule(db.Model):
     shift_id = Column(Integer, ForeignKey("shifts.id"), nullable=False)
     shift_date = Column(Date, nullable=False)
     location = Column(sqlEnum(LocationEnum), nullable=False)
+    custom_start_time = Column(Time, nullable=True)
+    custom_end_time = Column(Time, nullable=True)
     
     def serialize(self):
+        start = self.custom_start_time or self.shift.start_time
+        end = self.custom_end_time or self.shift.end_time
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -120,8 +132,8 @@ class Schedule(db.Model):
                 "department": self.user.department.value
             },
             "shift": {
-                "start_time": self.shift.start_time.strftime("%H:%M") if self.shift.start_time else None,
-                "end_time": self.shift.end_time.strftime("%H:%M") if self.shift.end_time else None
+                "start_time": start.strftime("%H:%M") if start else None,
+                "end_time": end.strftime("%H:%M") if end else None
             }
         }
     

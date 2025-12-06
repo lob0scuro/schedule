@@ -111,6 +111,7 @@ export const getWorkWeekFromDate = (date) => {
 };
 
 export const convertTime = (time) => {
+  if (time === null) return "OFF";
   if (time === "OFF") return time;
 
   const [hourStr, minute] = time.split(":");

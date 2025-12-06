@@ -37,7 +37,6 @@ const LoginForm = () => {
 
   return (
     <div className={styles.loginFormMaster}>
-      <h2>Login</h2>
       <form className={styles.loginForm} onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email</label>

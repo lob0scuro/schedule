@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
+  margin-block: 2rem;
 }
 
 .loginFormMaster h2 {
@@ -42,4 +43,19 @@
   font-size: 36px;
   padding: 10px 24px;
   border-radius: 8px;
+}
+
+@media screen and (max-width: 600px) {
+  .loginFormMaster form div {
+    width: 100%;
+  }
+
+  .loginFormMaster button {
+    background-color: var(--primary);
+    color: var(--accent);
+    font-size: 30px;
+    padding: 6px 24px;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
 }

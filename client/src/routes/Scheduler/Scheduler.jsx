@@ -98,10 +98,6 @@ const Scheduler = () => {
     scheduleGet();
   }, []);
 
-  useEffect(() => {
-    console.log(pendingAssignments);
-  }, [pendingAssignments]);
-
   //GENERATE SCHEDULE ROWS [USER ID, ...WEEKDAYS]
   const scheduleRows = useMemo(() => {
     return departments[selectedDpt].map((user) => {

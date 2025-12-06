@@ -63,6 +63,7 @@ h3.reasonHeader {
   resize: none;
   font-size: 22px;
   padding: 6px;
+  border-radius: 8px;
 }
 
 .timeOffRequestMasterBlock button[type="submit"] {
@@ -74,4 +75,28 @@ h3.reasonHeader {
   color: var(--accent);
   margin-top: 4rem;
   box-shadow: -1px 1px 5px #222;
+}
+
+@media screen and (max-width: 600px) {
+  .timeOffRequestMasterBlock {
+    flex-direction: column;
+    width: 90%;
+    overflow-x: hidden;
+  }
+
+  .timeOffRequestMasterBlock form div.reasonRadio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .timeOffRequestMasterBlock form div.reasonRadio textarea {
+    align-self: center;
+    width: 60%;
+  }
+
+  .timeOffRequestMasterBlock button[type="submit"] {
+    font-size: 1.4rem;
+    margin-block: 2rem;
+  }
 }

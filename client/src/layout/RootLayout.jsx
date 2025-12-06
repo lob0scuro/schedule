@@ -19,7 +19,7 @@ const RootLayout = () => {
   return (
     <>
       <header>
-        <Link to={"/"}>Scheduler</Link>
+        <Link to={"/"}>schedules</Link>
       </header>
       <main>
         <Outlet />

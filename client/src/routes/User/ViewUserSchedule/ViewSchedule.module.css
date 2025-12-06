@@ -1,0 +1,93 @@
+.viewContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.viewHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.viewHeader h1 {
+  text-align: center;
+  line-height: 2.5rem;
+}
+
+.viewHeader > div {
+  display: flex;
+  flex-direction: row;
+  border-radius: 18px;
+}
+
+.viewHeader > div button {
+  background-color: var(--primary);
+  color: var(--secondary);
+  font-size: 2rem;
+  padding: 4px 24px;
+  border: 1px solid var(--linkText);
+}
+
+.viewHeader > div button:first-child {
+  border-radius: 18px 0 0 18px;
+}
+.viewHeader > div button:last-child {
+  border-radius: 0 18px 18px 0;
+}
+
+.userScheduleView {
+  margin: 2rem 0 4rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+  width: 100%;
+  align-self: center;
+}
+
+.userScheduleView > small {
+  color: var(--linkText);
+  margin-left: 4px;
+  font-weight: 800;
+}
+
+.userScheduleView > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+.userScheduleView > div > p:first-child {
+  background-color: var(--primary);
+  width: 100%;
+  color: var(--accent);
+  text-align: center;
+  padding-block: 10px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  border-radius: 12px 12px 0 0;
+}
+
+.userScheduleView > div > div {
+  border: 1px solid var(--primary);
+  padding: 1rem;
+  border-radius: 0 0 12px 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 22px;
+}
+
+.noSchedule {
+  width: 100%;
+  margin: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-style: italic;
+}

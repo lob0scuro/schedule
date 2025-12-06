@@ -4,6 +4,7 @@
   align-items: center;
   gap: 3rem;
   width: 100%;
+  margin-top: 2rem;
 }
 
 .navLinks {
@@ -11,4 +12,21 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  width: 60%;
+}
+
+.navLinks a {
+  background-color: var(--primary);
+  color: var(--accent);
+  padding: 10px 24px;
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
+  box-shadow: -2px 2px 6px #333;
+}
+
+.navLinks a:active {
+  background-color: var(--linkText);
+  transform: translate(-1px, 1px);
+  box-shadow: 0px -1px 2px #000;
 }
