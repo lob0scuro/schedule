@@ -258,3 +258,62 @@ span:hover {
 .gridCell.timeOffCell svg {
   color: darkred;
 }
+
+small.mobileDateRead {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .schedulerMaster {
+    width: 90%;
+  }
+
+  .cbRow1 {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .controlBar .cbRow2 {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+
+  .controlBar .cbRow2 button {
+    padding: 10px 14px !important;
+  }
+
+  .cbRow2 button.addShiftButton {
+    display: none;
+  }
+
+  .shiftControls {
+    flex-wrap: wrap;
+  }
+
+  .scheduleHeader {
+    display: none;
+  }
+
+  .userRow {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  div.gridCell.employeeCell {
+    flex: 0 0 100%;
+  }
+
+  .gridCell.dateCell {
+    flex: 1 0 30%;
+    display: flex;
+    flex-direction: column;
+  }
+  .gridCell.dateCell small.mobileDateRead {
+    font-size: 10px;
+    display: block;
+  }
+
+  button.footerCell {
+    display: none;
+  }
+}

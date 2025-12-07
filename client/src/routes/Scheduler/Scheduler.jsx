@@ -61,6 +61,7 @@ const Scheduler = () => {
         return;
       }
       setShifts(shiftList.shifts);
+      console.log(shiftList.shifts);
     };
     shiftGet();
   }, [addingShift]);
@@ -369,6 +370,8 @@ const Scheduler = () => {
           )}
         </div>
       </div>
+      {/* END CONTROL BAR */}
+      {/* START SCHEDULE */}
       <div className={styles.scheduleBlock}>
         <div className={styles.scheduleHeader}>
           <div
@@ -440,11 +443,11 @@ const Scheduler = () => {
                     "-" +
                     cell.custom_end_time
                   }`;
+                } else if (shift.id === 9999) {
+                  display = shift.title;
+                } else {
+                  display = shift.title;
                 }
-              } else if (shift.id === 9999) {
-                display = shift.title;
-              } else {
-                display = shift.title;
               }
               return (
                 <div
@@ -464,6 +467,9 @@ const Scheduler = () => {
                     }
                   }}
                 >
+                  <small className={styles.mobileDateRead}>
+                    {WEEKDAY[cellIndex + 1]}
+                  </small>
                   {cell.is_time_off ? (
                     <FontAwesomeIcon icon={faNotdef} />
                   ) : cell.shift_id ? (
