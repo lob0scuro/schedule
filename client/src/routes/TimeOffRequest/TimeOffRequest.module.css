@@ -80,19 +80,23 @@ h3.reasonHeader {
 @media screen and (max-width: 1400px) {
   .timeOffRequestMasterBlock {
     flex-direction: column;
-    width: 90%;
+    width: 100%;
     overflow-x: hidden;
+  }
+
+  .timeOffRequestMasterBlock form div {
+    width: 80%;
   }
 
   .timeOffRequestMasterBlock form div.reasonRadio {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
 
   .timeOffRequestMasterBlock form div.reasonRadio textarea {
-    align-self: center;
-    width: 60%;
+    width: 100%;
   }
 
   .timeOffRequestMasterBlock button[type="submit"] {

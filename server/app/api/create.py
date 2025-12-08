@@ -154,6 +154,27 @@ def create_bulk_schedule():
         db.session.rollback()
         current_app.logger.error(f"[BULK SCHEDULE ERROR]: {e}")
         return jsonify(success=False, message=str(e)), 500
+    
+    
+@creator.route("/schedule_note/<int:id>", methods=["POST"])
+@login_required
+def add_schedule_note(id):
+    try:
+        schedule = Schedule.query.get(id)
+        if not schedule:
+            return jsonify(success=False, message="Schedule not found"), 400
+        data = request.get_json()
+        content = data.get("note")
+        if not content:
+            return jsonify(success=False, message="No message in payload"), 400
+        schedule.note = content
+        db.session.commit()
+        return jsonify(success=True, message="Note added to scheduled shift"), 201
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"[SCHEDULE NOTE ERROR]: {e}")
+        return jsonify(success=False, message="There was an error when submitting schedule note."), 500
+
 
 #--------------------
 #   CREATE A NEW AVAILABILITY BLOCK

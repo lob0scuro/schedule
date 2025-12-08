@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
+  faNoteSticky,
   faSquarePlus,
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
@@ -26,6 +27,7 @@ import {
   faTrash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import clsx from "clsx";
 
 const locale = {
   lake_charles: "Lake Charles",
@@ -37,16 +39,8 @@ const ViewSchedule = () => {
   const { user } = useAuth();
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
   const [schedule, setSchedule] = useState([]);
-
-  const getWeekHeader = () => {
-    const start = currentWeek[0];
-    const end = currentWeek[currentWeek.length - 1];
-    const startMonth = MONTH_NAMES[start.getMonth()];
-    const endMonth = MONTH_NAMES[end.getMonth()];
-    return startMonth === endMonth
-      ? `${startMonth} ${start.getDate()} - ${end.getDate()}`
-      : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
-  };
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     const start = formatDate(currentWeek[0]);
@@ -63,6 +57,16 @@ const ViewSchedule = () => {
     };
     scheduleGet();
   }, [user, currentWeek]);
+
+  const getWeekHeader = () => {
+    const start = currentWeek[0];
+    const end = currentWeek[currentWeek.length - 1];
+    const startMonth = MONTH_NAMES[start.getMonth()];
+    const endMonth = MONTH_NAMES[end.getMonth()];
+    return startMonth === endMonth
+      ? `${startMonth} ${start.getDate()} - ${end.getDate()}`
+      : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
+  };
 
   // Helper: Build Mon-Sat week from a Monday
   const buildWeekFromMonday = (monday) => {
@@ -94,6 +98,31 @@ const ViewSchedule = () => {
     setCurrentWeek(buildWeekFromMonday(nextMonday));
   };
 
+  const handleNote = async (id) => {
+    if (!confirm("Add note to shift?")) return;
+
+    try {
+      const response = await fetch(`/api/create/schedule_note/${id}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content: content }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+      toast.success(data.message);
+      setContent("");
+      setActiveIndex(null);
+    } catch (error) {
+      console.error("[NOTE SUBMISSION ERROR] ", error);
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className={styles.viewContainer}>
       <div className={styles.viewHeader}>
@@ -109,29 +138,60 @@ const ViewSchedule = () => {
           </button>
         </div>
         <h1>
-          {user.first_name}'s Schedule <br /> {getWeekHeader()}
+          {user.first_name} {user.last_name[0]}.
+          <br />
+          {getWeekHeader()}
         </h1>
       </div>
       {schedule.length !== 0 ? (
         <div className={styles.userScheduleView}>
           {schedule.map((day, index) => (
-            <>
-              <small>{WEEKDAY[index + 1]}</small>
-              <div key={index}>
-                <p>{convertDate(day.shift_date)}</p>
-                <div>
-                  {day.shift.start_time !== null ? (
-                    <p>
-                      {convertTime(day.shift.start_time)} -{" "}
-                      {convertTime(day.shift.end_time)}
-                    </p>
-                  ) : (
-                    <p>OFF</p>
-                  )}
-                  <small>{locale[day.location]}</small>
-                </div>
+            <div key={index} className={styles.weekdayItem}>
+              <div className={styles.weekdayHeader}>
+                <span>
+                  {WEEKDAY[index + 1]} {convertDate(day.shift_date)}
+                </span>
+                {user.role === "admin" && (
+                  <FontAwesomeIcon
+                    icon={faNoteSticky}
+                    onClick={() =>
+                      activeIndex === index
+                        ? setActiveIndex(null)
+                        : setActiveIndex(index)
+                    }
+                  />
+                )}
               </div>
-            </>
+              <div className={styles.weekdayBody}>
+                {day.shift.start_time !== null ? (
+                  <p>
+                    {convertTime(day.shift.start_time)} -{" "}
+                    {convertTime(day.shift.end_time)}
+                  </p>
+                ) : (
+                  <p>OFF</p>
+                )}
+                <small>{locale[day.location]}</small>
+
+                {activeIndex === index && (
+                  <>
+                    <textarea
+                      name="content"
+                      id="content"
+                      value={content}
+                      className={styles.contentForm}
+                      onChange={(e) => setContent(e.target.value)}
+                    ></textarea>
+                    <button
+                      className={styles.submitContentButton}
+                      onClick={() => handleNote(day.id)}
+                    >
+                      Submit
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       ) : (

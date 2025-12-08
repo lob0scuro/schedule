@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
+  faNoteSticky,
   faSquarePlus,
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
@@ -93,7 +94,7 @@ const Scheduler = () => {
     const scheduleGet = async () => {
       const scheduleList = await getSchedules();
       if (!scheduleList.success) {
-        toast.error(scheduleList.message);
+        // toast.error(scheduleList.message);
         return;
       }
       setSchedules(scheduleList.schedules);
@@ -500,10 +501,15 @@ const Scheduler = () => {
                     cell.status === "committed" && styles.committedCell
                   )}
                   key={cellIndex}
+                  // onClick={() => {
+                  //   if (cell.shift_id && !selectedShift) {
+                  //     handleDeleteSchedule(cell);
+                  //   } else {
+                  //     handleCellClick(cell);
+                  //   }
+                  // }}
                   onClick={() => {
-                    if (cell.shift_id && !selectedShift) {
-                      handleDeleteSchedule(cell);
-                    } else {
+                    if (!cell.shift_id) {
                       handleCellClick(cell);
                     }
                   }}
@@ -515,9 +521,18 @@ const Scheduler = () => {
                     <FontAwesomeIcon icon={faNotdef} />
                   ) : cell.shift_id ? (
                     <span className={styles.shiftAssignedCell}>
-                      {display}{" "}
-                      <span className={styles.cellLocationBadge}>
-                        {locationAbbr(cell.location)}
+                      <span
+                        onClick={() => {
+                          if (cell.shift_id && !selectedShift) {
+                            handleDeleteSchedule(cell);
+                          }
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {display}{" "}
+                        <span className={styles.cellLocationBadge}>
+                          {locationAbbr(cell.location)}
+                        </span>
                       </span>
                     </span>
                   ) : (

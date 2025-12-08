@@ -80,3 +80,24 @@ li.noRequests p {
   font-size: 2rem;
   align-self: center;
 }
+
+@media screen and (max-width: 1400px) {
+  .timeOffStatusMasterBlock > div > p:first-child {
+    font-size: 1.5rem;
+  }
+  .timeOffStatusMasterBlock div ul li {
+    flex-direction: column;
+  }
+  .timeOffStatusMasterBlock div ul li div:last-child {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-block: 1rem;
+  }
+
+  .timeOffStatusMasterBlock div ul li div:first-child {
+    font-size: 1rem;
+    align-items: flex-start;
+    align-self: center;
+  }
+}

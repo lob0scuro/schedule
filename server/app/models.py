@@ -114,6 +114,7 @@ class Schedule(db.Model):
     location = Column(sqlEnum(LocationEnum), nullable=False)
     custom_start_time = Column(Time, nullable=True)
     custom_end_time = Column(Time, nullable=True)
+    note = Column(Text, nullable=True)
     
     def serialize(self):
         start = self.custom_start_time or self.shift.start_time
@@ -132,7 +133,8 @@ class Schedule(db.Model):
             "shift": {
                 "start_time": start.strftime("%H:%M") if start else None,
                 "end_time": end.strftime("%H:%M") if end else None
-            }
+            },
+            "note": self.note 
         }
     
     

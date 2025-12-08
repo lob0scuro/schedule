@@ -16,7 +16,7 @@ const TimeOffStatus = () => {
       const response = await fetch("/api/read/time_off_requests");
       const data = await response.json();
       if (!data.success) {
-        toast.error(data.message);
+        // toast.error(data.message);
         return;
       }
       setRo({
@@ -28,6 +28,28 @@ const TimeOffStatus = () => {
 
     getRequestOffs();
   }, [statusChanges]);
+
+  const deleteTimeOffRequest = async (id) => {
+    if (!confirm("Delete time off request?")) return;
+    try {
+      const response = await fetch(`/api/delete/time_off_request/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+      setStatusChanges((prev) => prev + 1);
+      toast.success(data.message);
+    } catch (error) {
+      console.error("[TIME OFF DELETE ERROR]: ", error);
+      toast.error(error.message);
+    }
+  };
 
   const createOffSchedule = async (userID, shiftDate) => {
     try {
@@ -129,11 +151,17 @@ const TimeOffStatus = () => {
                 <li key={id}>
                   <div>
                     <h4>
-                      {user.first_name} {user.last_name}.
+                      {user.first_name} {user.last_name}
                     </h4>
-                    <p>Start Date: {convertDate(start_date)}</p>
-                    <p>End Date: {convertDate(end_date)}</p>
-                    <p>reason: {reason}</p>
+                    <p>
+                      <strong>Start Date:</strong> {convertDate(start_date)}
+                    </p>
+                    <p>
+                      <strong>End Date:</strong> {convertDate(end_date)}
+                    </p>
+                    <p>
+                      <strong>Reason:</strong> {reason}
+                    </p>
                   </div>
                   <div>
                     <button
@@ -184,11 +212,17 @@ const TimeOffStatus = () => {
                 <li key={id}>
                   <div>
                     <h4>
-                      {user.first_name} {user.last_name}.
+                      {user.first_name} {user.last_name}
                     </h4>
-                    <p>reason: {reason}</p>
-                    <p>Start Date: {convertDate(start_date)}</p>
-                    <p>End Date: {convertDate(end_date)}</p>
+                    <p>
+                      <strong>Start Date:</strong> {convertDate(start_date)}
+                    </p>
+                    <p>
+                      <strong>End Date:</strong> {convertDate(end_date)}
+                    </p>
+                    <p>
+                      <strong>Reason:</strong> {reason}
+                    </p>
                   </div>
                   <div>
                     <button
@@ -226,11 +260,17 @@ const TimeOffStatus = () => {
                 <li key={id}>
                   <div>
                     <h4>
-                      {user.first_name} {user.last_name}.
+                      {user.first_name} {user.last_name}
                     </h4>
-                    <p>reason: {reason}</p>
-                    <p>Start Date: {convertDate(start_date)}</p>
-                    <p>End Date: {convertDate(end_date)}</p>
+                    <p>
+                      <strong>Start Date:</strong> {convertDate(start_date)}
+                    </p>
+                    <p>
+                      <strong>End Date:</strong> {convertDate(end_date)}
+                    </p>
+                    <p>
+                      <strong>Reason:</strong> {reason}
+                    </p>
                   </div>
                   <div>
                     <button
@@ -245,6 +285,12 @@ const TimeOffStatus = () => {
                       }
                     >
                       Approve
+                    </button>
+                    <button
+                      onClick={() => deleteTimeOffRequest(id)}
+                      className={styles.denyRequest}
+                    >
+                      Delete
                     </button>
                   </div>
                 </li>

@@ -1,5 +1,5 @@
 .schedulerMaster {
-  width: 80%;
+  width: 90%;
   border: 2px solid var(--primary);
   border-radius: 8px;
   display: flex;
@@ -122,14 +122,6 @@ CONTROL BAR ROW 1
   transition: all 0.3s ease;
   z-index: 1;
 }
-
-/* #lc:checked ~ .toggleSlider {
-  left: 0;
-}
-
-#jennings:checked ~ .toggleSlider {
-  left: 50%;
-} */
 
 .controlBar .cbRow2 .shiftControls button {
   background-color: var(--linkText);
@@ -311,6 +303,17 @@ small.mobileDateRead {
   display: none;
 }
 
+.shiftAssignedCell {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.shiftAssignedCell:hover {
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 1400px) {
   .schedulerMaster {
     width: 90%;
@@ -362,6 +365,10 @@ small.mobileDateRead {
   }
 
   button.footerCell {
+    display: none;
+  }
+
+  .shiftAssignedCell .addNoteButton {
     display: none;
   }
 }
