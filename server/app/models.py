@@ -41,10 +41,7 @@ class User(db.Model, UserMixin):
     
     schedules = relationship("Schedule", backref="user", lazy=True)
     availability = relationship("Availability", backref="user", lazy=True)
-    time_off_requests = relationship("TimeOffRequest", primaryjoin=lambda: and_(
-            User.id == foreign(TimeOffRequest.user_id),
-            TimeOffRequest.status == TimeOffStatusEnum.APPROVED
-        ), backref="user", lazy=True)
+    time_off_requests = relationship("TimeOffRequest", backref="user", lazy=True)
     
     def serialize_basic(self):
         return {
@@ -73,6 +70,7 @@ class User(db.Model, UserMixin):
 class Shift(db.Model):
     __tablename__ = "shifts"
     
+    #Shift ID for Custom shifts is 9998; shift ID for off is 9999
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
     start_time = Column(Time, nullable=True)
@@ -181,8 +179,8 @@ class TimeOffRequest(db.Model):
             "reason": self.reason,
             "status": self.status.value,
             "user": {
-                "first_name": self.user.first_name if self.user else None,
-                "last_name": self.user.last_name if self.user else None,
-                "department": self.user.department.value if self.user else None,
+                "first_name": self.user.first_name,
+                "last_name": self.user.last_name,
+                "department": self.user.department.value,
             }
         }

@@ -14,21 +14,26 @@
   align-items: center;
 }
 
-.timeOffStatusMasterBlock > div > p {
+.timeOffStatusMasterBlock > div > p:first-child {
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 2rem;
   align-self: flex-start;
   margin-left: 6px;
+  color: var(--primary);
+  text-shadow: -1px 1px 3px #333;
 }
 
 .timeOffStatusMasterBlock ul {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
+  list-style-type: none;
   gap: 2rem;
   width: 100%;
   font-size: 24px;
+  background: var(--linkText);
+  padding: 1rem;
+  border-radius: 12px;
 }
 
 .timeOffStatusMasterBlock ul li {
@@ -37,10 +42,11 @@
   min-height: 100px;
   align-items: flex-end;
   justify-content: space-between;
-  background-color: var(--linkText);
-  color: var(--accent);
+  background-color: var(--secondary);
+  color: var(--primary);
   padding: 8px;
-  box-shadow: -1px 1px 6px #333;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
 }
 
 .timeOffStatusMasterBlock ul li div:first-child {

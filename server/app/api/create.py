@@ -8,6 +8,12 @@ from datetime import time, date
 
 creator = Blueprint("create", __name__)
 
+def str_to_time(s):
+    if not s:
+        return None
+    h, m = map(int, s.split(":"))
+    return time(hour=h, minute=m)
+
 #--------------------
 #   CREATE A NEW SHIFT BLOCK
 #--------------------
@@ -112,6 +118,9 @@ def create_bulk_schedule():
             shift_date_str = item.get("shift_date")
             location_str = item.get("location")
             
+            custom_start = str_to_time(item.get("custom_start_time"))
+            custom_end = str_to_time(item.get("custom_end_time"))
+            
             if not all([user_id, shift_id, shift_date_str, location_str]):
                 raise ValueError("Missing required fields")
             
@@ -122,16 +131,21 @@ def create_bulk_schedule():
                 user_id=user_id,
                 shift_date=shift_date
             ).first()
+            
             if exists:
                 exists.shift_id = shift_id
-                exists.location = location
+                exists.location = location              
+                exists.custom_start_time = custom_start
+                exists.custom_end_time = custom_end
                 continue
             
             schedule_item = Schedule(
                 user_id=user_id,
                 shift_id=shift_id,
                 shift_date=shift_date,
-                location=location
+                location=location, 
+                custom_start_time=custom_start,
+                custom_end_time=custom_end
             )
             db.session.add(schedule_item)
         db.session.commit()

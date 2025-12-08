@@ -19,10 +19,13 @@ def delete_user(id):
     db.session.commit()
     return jsonify(success=True, message="User has been deleted."), 200
 
-@deleter.route("/schedule/<int:id>", methods=["DELETE"])
+@deleter.route("/schedule/<int:id>/<date>", methods=["DELETE"])
 @login_required
-def delete_schedule(id):
-    schedule_item = Schedule.query.get(id)
+def delete_schedule(id, date):
+    schedule_item = Schedule.query.filter(
+        Schedule.user_id == id,
+        Schedule.shift_date == date
+    ).first()
     if not schedule_item:
         return jsonify(success=False, message="Schedule not found."), 400
     

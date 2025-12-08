@@ -6,8 +6,10 @@ import {
   changeMonth,
   convertDate,
   convertTime,
+  convertToMilitary,
   formatDate,
   getWorkWeekFromDate,
+  locationAbbr,
   suffix,
 } from "../../utils/Helpers";
 import { getShifts, getUsers, getSchedules } from "../../utils/API";
@@ -27,7 +29,6 @@ import {
   faTrash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import RegisterForm from "../../components/Register/RegisterForm";
 import ShiftForm from "../../components/Shift/ShiftForm";
 import { clsx } from "clsx";
@@ -52,6 +53,8 @@ const Scheduler = () => {
   const [addingEmployee, setAddingEmployee] = useState(false);
   const [addingShift, setAddingShift] = useState(false);
   const [pendingAssignments, setPendingAssignments] = useState({});
+  const [isLC, setIsLC] = useState(true);
+  const currentLocation = isLC ? "lake_charles" : "jennings";
 
   useEffect(() => {
     const shiftGet = async () => {
@@ -61,7 +64,6 @@ const Scheduler = () => {
         return;
       }
       setShifts(shiftList.shifts);
-      console.log(shiftList.shifts);
     };
     shiftGet();
   }, [addingShift]);
@@ -119,7 +121,10 @@ const Scheduler = () => {
           : "empty";
 
         const timeOffRequest = user.time_off_requests?.find(
-          (req) => req.start_date <= dateStr && dateStr <= req.end_date
+          (req) =>
+            req.start_date <= dateStr &&
+            dateStr <= req.end_date &&
+            req.status == "approved"
         );
 
         return {
@@ -128,10 +133,16 @@ const Scheduler = () => {
           shift_id: pending?.shift_id ?? scheduledShift?.shift_id ?? null,
           schedule_id: scheduledShift?.id ?? null,
           location:
-            pending?.location ?? scheduledShift?.location ?? "lake_charles",
+            pending?.location ?? scheduledShift?.location ?? currentLocation,
           is_time_off: !!timeOffRequest,
           time_off_request: timeOffRequest || null,
           status: state,
+          custom_start_time:
+            pending?.custom_start_time ??
+            scheduledShift?.shift.start_time ??
+            null,
+          custom_end_time:
+            pending?.custom_end_time ?? scheduledShift?.shift.end_time ?? null,
         };
       });
     });
@@ -194,12 +205,15 @@ const Scheduler = () => {
       user_id: cell.user_id,
       shift_id: selectedShift,
       shift_date: formatDate(cell.date),
-      location: cell.location,
+      location: currentLocation,
     };
 
     if (selectedShift === 9998) {
-      const startTime = prompt("Enter start time (HH:MM)");
-      const endTime = prompt("Enter end time (HH:MM)");
+      let startTime = prompt("Enter start time [HH:MM] (please specify AM/PM)");
+      let endTime = prompt("Enter end time [HH:MM] (please specify AM/PM)");
+
+      startTime = convertToMilitary(startTime);
+      endTime = convertToMilitary(endTime);
 
       if (!startTime || !endTime) {
         toast.error("Custom shifts require start and end times");
@@ -253,10 +267,13 @@ const Scheduler = () => {
 
     if (!confirm("Delete this scheduled shift?")) return;
 
-    const response = await fetch(`/api/delete/schedule/${cell.schedule_id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `/api/delete/schedule/${cell.user_id}/${formatDate(cell.date)}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
 
     const data = await response.json();
     if (!data.success) {
@@ -339,6 +356,30 @@ const Scheduler = () => {
             ))}
           </select>
           <div className={styles.shiftControls}>
+            <div className={styles.locationToggle}>
+              <div
+                className={styles.toggleSlider}
+                style={{ left: isLC ? "0%" : "50%" }}
+              ></div>
+              <input
+                type="radio"
+                name="location"
+                id="lc"
+                value={"lake_charles"}
+                checked={isLC}
+                onChange={() => setIsLC(true)}
+              />
+              <label htmlFor="lc">Lake Charles</label>
+              <input
+                type="radio"
+                name="location"
+                id="jennings"
+                value={"jennings"}
+                checked={!isLC}
+                onChange={() => setIsLC(false)}
+              />
+              <label htmlFor="jennings">Jennings</label>
+            </div>
             {shifts?.map(({ id, title, start_time, end_time }) => (
               <button
                 key={id}
@@ -438,10 +479,10 @@ const Scheduler = () => {
                 display = null;
               } else if (shift) {
                 if (shift.id === 9998) {
-                  display = `${shift.title} ${
+                  display = `${
                     (cell.custom_start_time || "--") +
                     "-" +
-                    cell.custom_end_time
+                    (cell.custom_end_time || "--")
                   }`;
                 } else if (shift.id === 9999) {
                   display = shift.title;
@@ -473,7 +514,12 @@ const Scheduler = () => {
                   {cell.is_time_off ? (
                     <FontAwesomeIcon icon={faNotdef} />
                   ) : cell.shift_id ? (
-                    <span className={styles.shiftAssignedCell}>{display}</span>
+                    <span className={styles.shiftAssignedCell}>
+                      {display}{" "}
+                      <span className={styles.cellLocationBadge}>
+                        {locationAbbr(cell.location)}
+                      </span>
+                    </span>
                   ) : (
                     <FontAwesomeIcon icon={faSquarePlus} />
                   )}

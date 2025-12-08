@@ -94,7 +94,7 @@ export const getWorkWeekFromDate = (date) => {
     d.setDate(d.getDate() + 1);
   }
 
-  const dayOfWeek = d.getDate();
+  const dayOfWeek = d.getDay();
   const monday = new Date(d);
 
   //move back to monday
@@ -108,6 +108,19 @@ export const getWorkWeekFromDate = (date) => {
   }
 
   return week;
+};
+
+export const getDatesInRange = (start, end) => {
+  const dates = [];
+  let current = new Date(start);
+
+  const last = new Date(end);
+  while (current <= last) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  return dates;
 };
 
 export const convertTime = (time) => {
@@ -134,3 +147,32 @@ export const formatDate = (date) => {
     "0"
   )}-${String(date.getDate()).padStart(2, "0")}`;
 };
+
+export const convertToMilitary = (input) => {
+  if (!input) return null;
+
+  input = input.trim().toLowerCase();
+
+  if (input === "noon") return "12:00";
+  if (input === "midnight") return "00:00";
+
+  let match = input.match(/(\d{1,2})(?::(\d{1,2}))?\s*(am|pm)?/i);
+  if (!match) return null;
+
+  let hour = parseInt(match[1], 10);
+  let minute = parseInt(match[2] || "0", 10);
+  let ampm = match[3];
+
+  if (ampm) {
+    if (ampm === "pm" && hour !== 12) hour += 12;
+    if (ampm === "am" && hour === 12) hour = 0;
+  }
+
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+
+  return (
+    hour.toString().padStart(2, "0") + ":" + minute.toString().padStart(2, "0")
+  );
+};
+
+export const locationAbbr = (loc) => (loc === "lake_charles" ? "LC" : "JN");

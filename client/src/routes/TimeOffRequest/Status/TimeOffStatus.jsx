@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import styles from "./TimeOffStatus.module.css";
 import React, { useEffect, useState } from "react";
-import { convertDate } from "../../../utils/Helpers";
+import { convertDate, getDatesInRange } from "../../../utils/Helpers";
 
 const TimeOffStatus = () => {
   const [ro, setRo] = useState({
@@ -29,9 +29,79 @@ const TimeOffStatus = () => {
     getRequestOffs();
   }, [statusChanges]);
 
-  const handleUpdate = async (userID, newStatus) => {
+  const createOffSchedule = async (userID, shiftDate) => {
+    try {
+      const response = await fetch("/api/create/schedule", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userID,
+          shift_id: 9999,
+          shift_date: shiftDate,
+          location: "lake_charles",
+        }),
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error("[ERROR CREATE OFF]:", error);
+      toast.error(error.message);
+    }
+  };
+
+  const deleteOffSchedule = async (userID, shiftDate) => {
+    try {
+      const response = await fetch(
+        `/api/delete/schedule/${userID}/${shiftDate}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+    } catch (err) {
+      console.error("[ERROR DELETE OFF]:", err);
+      toast.error(err.message);
+    }
+  };
+
+  const handleScheduleRange = async (create, userID, startDate, endDate) => {
+    const dates = getDatesInRange(startDate, endDate);
+
+    for (const d of dates) {
+      if (create) {
+        await createOffSchedule(userID, d);
+      } else {
+        await deleteOffSchedule(userID, d);
+      }
+    }
+  };
+
+  const handleUpdate = async (
+    requestID,
+    newStatus,
+    userID,
+    startDate,
+    endDate
+  ) => {
+    if (newStatus === "approved") {
+      await handleScheduleRange(true, userID, startDate, endDate);
+    }
+
+    if (newStatus === "denied") {
+      await handleScheduleRange(false, userID, startDate, endDate);
+    }
+
     const response = await fetch(
-      `/api/update/time_off_request/${userID}/${newStatus}`,
+      `/api/update/time_off_request/${requestID}/${newStatus}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -49,6 +119,7 @@ const TimeOffStatus = () => {
   return (
     <div className={styles.timeOffStatusMasterBlock}>
       <h2>Time Off Requests</h2>
+      {/* ---------------- PENDING ---------------- */}
       <div>
         <p>Pending Requests</p>
         <ul className={styles.pendingList}>
@@ -65,12 +136,30 @@ const TimeOffStatus = () => {
                     <p>reason: {reason}</p>
                   </div>
                   <div>
-                    <button onClick={() => handleUpdate(id, "approved")}>
+                    <button
+                      onClick={() =>
+                        handleUpdate(
+                          id,
+                          "approved",
+                          user.id,
+                          start_date,
+                          end_date
+                        )
+                      }
+                    >
                       Approve
                     </button>
                     <button
                       className={styles.denyRequest}
-                      onClick={() => handleUpdate(id, "denied")}
+                      onClick={() =>
+                        handleUpdate(
+                          id,
+                          "denied",
+                          user.id,
+                          start_date,
+                          end_date
+                        )
+                      }
                     >
                       Deny
                     </button>
@@ -85,6 +174,7 @@ const TimeOffStatus = () => {
           )}
         </ul>
       </div>
+      {/* ---------------- APPROVED ---------------- */}
       <div>
         <p>Approved Requests</p>
         <ul className={styles.approvedList}>
@@ -103,7 +193,15 @@ const TimeOffStatus = () => {
                   <div>
                     <button
                       className={styles.denyRequest}
-                      onClick={() => handleUpdate(id, "denied")}
+                      onClick={() =>
+                        handleUpdate(
+                          id,
+                          "denied",
+                          user.id,
+                          start_date,
+                          end_date
+                        )
+                      }
                     >
                       Deny
                     </button>
@@ -118,6 +216,7 @@ const TimeOffStatus = () => {
           )}
         </ul>
       </div>
+      {/* ---------------- DENIED ---------------- */}
       <div>
         <p>Denied Requests</p>
         <ul className={styles.deniedList}>
@@ -134,7 +233,17 @@ const TimeOffStatus = () => {
                     <p>End Date: {convertDate(end_date)}</p>
                   </div>
                   <div>
-                    <button onClick={() => handleUpdate(id, "approved")}>
+                    <button
+                      onClick={() =>
+                        handleUpdate(
+                          id,
+                          "approved",
+                          user.id,
+                          start_date,
+                          end_date
+                        )
+                      }
+                    >
                       Approve
                     </button>
                   </div>

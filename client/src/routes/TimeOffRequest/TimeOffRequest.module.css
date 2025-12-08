@@ -77,7 +77,7 @@ h3.reasonHeader {
   box-shadow: -1px 1px 5px #222;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1400px) {
   .timeOffRequestMasterBlock {
     flex-direction: column;
     width: 90%;
