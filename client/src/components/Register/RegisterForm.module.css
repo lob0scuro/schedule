@@ -59,6 +59,9 @@ select {
   align-items: center;
   padding: 1rem;
   border-radius: 12px;
+  border: 3px solid var(--linkText);
+  box-shadow: -1px 1px 3px #333;
+  margin-bottom: 2rem;
 }
 
 .importUserForm form {
@@ -84,9 +87,9 @@ select {
   grid-column-start: 1;
   grid-column-end: 3;
   background-color: var(--primary);
-  color: #fefefe;
+  color: var(--secondary);
   margin: 20px 0;
   border-radius: 8px;
-  padding: 15px 0;
+  padding: 10px 0;
   font-size: 1.4rem;
 }

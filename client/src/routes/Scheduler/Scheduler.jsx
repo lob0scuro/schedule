@@ -26,6 +26,7 @@ import {
   faCalendarWeek,
   faEllipsis,
   faForwardStep,
+  faGears,
   faNotdef,
   faTrash,
   faUserPlus,
@@ -51,8 +52,6 @@ const Scheduler = () => {
   const [schedules, setSchedules] = useState([]);
   const [selectedDpt, setSelectedDpt] = useState("all");
   const [selectedShift, setSelectedShift] = useState("");
-  const [addingEmployee, setAddingEmployee] = useState(false);
-  const [addingShift, setAddingShift] = useState(false);
   const [pendingAssignments, setPendingAssignments] = useState({});
   const [isLC, setIsLC] = useState(true);
   const currentLocation = isLC ? "lake_charles" : "jennings";
@@ -67,7 +66,7 @@ const Scheduler = () => {
       setShifts(shiftList.shifts);
     };
     shiftGet();
-  }, [addingShift]);
+  }, []);
 
   useEffect(() => {
     const usersGet = async () => {
@@ -88,7 +87,7 @@ const Scheduler = () => {
     };
 
     usersGet();
-  }, [addingEmployee]);
+  }, []);
 
   useEffect(() => {
     const scheduleGet = async () => {
@@ -387,7 +386,7 @@ const Scheduler = () => {
               onChange={(e) => setSelectedShift(Number(e.target.value))}
             >
               <option value="">--select shift--</option>
-              {shifts?.map(({ id, title, start_time, end_time }) => (
+              {shifts?.map(({ id, title }) => (
                 <option value={id} key={id}>
                   {title}
                 </option>
@@ -403,16 +402,11 @@ const Scheduler = () => {
             </button>
           </div>
           <button
-            className={styles.addShiftButton}
-            onClick={() => setAddingShift(!addingShift)}
+            className={styles.settingsButton}
+            onClick={() => navigate("/settings")}
           >
-            <FontAwesomeIcon icon={faClock} />
+            <FontAwesomeIcon icon={faGears} />
           </button>
-          {addingShift && (
-            <div className={styles.cbShiftForm}>
-              <ShiftForm bool={setAddingShift} />
-            </div>
-          )}
         </div>
       </div>
       {/* END CONTROL BAR */}
@@ -547,23 +541,6 @@ const Scheduler = () => {
           </div>
         ))}
         <div className={styles.scheduleFooter}>
-          {addingEmployee && (
-            <div className={styles.sfUserForm}>
-              <RegisterForm bool={setAddingEmployee} />
-            </div>
-          )}
-          <button
-            className={styles.footerCell}
-            onClick={() => setAddingEmployee(!addingEmployee)}
-            style={{
-              color: addingEmployee ? "#fefefe" : "",
-              backgroundColor: addingEmployee ? "transparent" : "",
-              fontSize: addingEmployee ? "1.5rem" : "",
-              border: "none",
-            }}
-          >
-            <FontAwesomeIcon icon={faUserPlus} />
-          </button>
           {currentWeek.map((day, index) => (
             <div key={index} className={styles.footerCell}></div>
           ))}

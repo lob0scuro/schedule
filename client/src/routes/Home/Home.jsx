@@ -18,22 +18,24 @@ const Home = () => {
     <div className={styles.homeContainer}>
       <div className={styles.navLinks}>
         <Link to={`/view-schedule/${user.id}`}>
-          View Schedule <FontAwesomeIcon icon={faCalendarDay} />
+          <FontAwesomeIcon icon={faCalendarDay} /> View Schedule
         </Link>
         <Link to={"/time-off-request"}>
-          Time Off Request <FontAwesomeIcon icon={faUserClock} />
+          <FontAwesomeIcon icon={faUserClock} />
+          Time Off Request
         </Link>
         {user.role === "admin" && (
           <>
             <Link to={"/scheduler"}>
-              Scheduler <FontAwesomeIcon icon={faCalendarDays} />
+              <FontAwesomeIcon icon={faCalendarDays} />
+              Scheduler
             </Link>
             <Link to={"/time-off-requests-status"}>
-              Approve/Deny Time Off Requests{" "}
               <FontAwesomeIcon icon={faCheckToSlot} />
+              Approve/Deny Time Off Requests{" "}
             </Link>
-            <Link to={"/settings"}>
-              Settings <FontAwesomeIcon icon={faGears} />
+            <Link to={"/settings"} className={styles.settingsNav}>
+              <FontAwesomeIcon icon={faGears} /> Settings
             </Link>
           </>
         )}

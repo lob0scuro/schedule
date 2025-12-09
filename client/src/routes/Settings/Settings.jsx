@@ -4,11 +4,15 @@ import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import { convertTime } from "../../utils/Helpers";
+import ShiftForm from "../../components/Shift/ShiftForm";
+import RegisterForm from "../../components/Register/RegisterForm";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const [shifts, setShifts] = useState([]);
   const [users, setUsers] = useState([]);
   const [department, setDepartment] = useState("all");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getShifts = async () => {
@@ -62,6 +66,7 @@ const Settings = () => {
   return (
     <div className={styles.settingContainer}>
       <div className={styles.shiftSettings}>
+        <ShiftForm />
         <h2>Shifts</h2>
         {shifts
           .filter((s) => s.id !== 9999 && s.id !== 9998)
@@ -82,9 +87,9 @@ const Settings = () => {
             </div>
           ))}
         <br />
-        <button className={styles.addem}>Add New Shift</button>
       </div>
       <div className={styles.userSettings}>
+        <RegisterForm bool />
         <h2>Users</h2>
         <select
           name="department"
@@ -102,7 +107,11 @@ const Settings = () => {
         </select>
         {users.map(
           ({ id, first_name, last_name, email, role, department }, index) => (
-            <div className={styles.userItem} key={index}>
+            <div
+              className={styles.userItem}
+              key={index}
+              onClick={() => navigate(`/user/${id}`)}
+            >
               <h3>
                 {first_name} {last_name}
               </h3>
@@ -127,7 +136,6 @@ const Settings = () => {
           )
         )}
         <br />
-        <button className={styles.addem}>Add New Employee</button>
       </div>
     </div>
   );

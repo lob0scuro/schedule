@@ -47,6 +47,7 @@ const ShiftForm = ({ bool, ...props }) => {
   };
   return (
     <div className={styles.shiftFormMasterBlock}>
+      <h2>Add Shift</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Shift Name</label>

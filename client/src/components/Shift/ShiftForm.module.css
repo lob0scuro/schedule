@@ -1,32 +1,42 @@
 .shiftFormMasterBlock {
   padding: 1rem;
   border-radius: 16px;
+  width: 100%;
+  border: 3px solid var(--linkText);
+  margin-bottom: 2rem;
+  box-shadow: -1px 1px 3px #333;
+}
+
+.shiftFormMasterBlock h2 {
+  text-align: center;
 }
 
 .shiftFormMasterBlock form {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   gap: 1rem;
 }
 
 .shiftFormMasterBlock form div {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .shiftFormMasterBlock form div input {
   height: 42px;
   font-size: 18px;
   padding: 4px;
+  width: 100%;
 }
 
 .shiftFormMasterBlock form button {
-  background-color: var(--linkText);
+  background-color: var(--primary);
   color: var(--secondary);
-  padding: 8px 12px;
-  font-size: 18px;
+  padding: 10px;
+  font-size: 24px;
   margin-block: 12px;
   align-self: stretch;
   border: none;
