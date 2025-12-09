@@ -9,12 +9,24 @@ form.userProfileBlock {
 form.userProfileBlock .userButtonBlock {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   width: 100%;
   margin-bottom: 2rem;
 }
+form.userProfileBlock .userButtonBlock button:first-child {
+  width: 100%;
+  background-color: var(--primary);
+  color: var(--accent);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: -1px 1px 4px #333;
+  font-weight: 700;
+}
+
 form.userProfileBlock .userButtonBlock button:last-child {
   background-color: darkred;
 }

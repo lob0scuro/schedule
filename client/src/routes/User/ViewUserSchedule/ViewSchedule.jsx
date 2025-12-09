@@ -28,6 +28,7 @@ import {
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
+import { useParams } from "react-router-dom";
 
 const locale = {
   lake_charles: "Lake Charles",
@@ -37,17 +38,32 @@ const locale = {
 const ViewSchedule = () => {
   const today = new Date();
   const { user } = useAuth();
+  const { id } = useParams();
+  const [selectedUser, setSelectedUser] = useState({});
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
   const [schedule, setSchedule] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
   const [content, setContent] = useState("");
 
   useEffect(() => {
+    const getUser = async () => {
+      const res = await fetch(`/api/read/user/${id}`);
+      const data = await res.json();
+      if (!data.success) {
+        toast.error(data.message);
+        return;
+      }
+      setSelectedUser(data.user);
+    };
+    getUser();
+  }, [id]);
+
+  useEffect(() => {
     const start = formatDate(currentWeek[0]);
     const end = formatDate(currentWeek[currentWeek.length - 1]);
     const scheduleGet = async () => {
       const res = await fetch(
-        `/api/read/schedule_week/${user.id}?start_date=${start}&end_date=${end}`
+        `/api/read/schedule_week/${selectedUser.id}?start_date=${start}&end_date=${end}`
       );
       const data = await res.json();
       if (!data.success) {
@@ -56,7 +72,7 @@ const ViewSchedule = () => {
       setSchedule(data.schedule);
     };
     scheduleGet();
-  }, [user, currentWeek]);
+  }, [id, user, currentWeek, activeIndex]);
 
   const getWeekHeader = () => {
     const start = currentWeek[0];
@@ -108,7 +124,7 @@ const ViewSchedule = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: content }),
+        body: JSON.stringify({ note: content }),
       });
       const data = await response.json();
       if (!data.success) {
@@ -138,7 +154,7 @@ const ViewSchedule = () => {
           </button>
         </div>
         <h1>
-          {user.first_name} {user.last_name[0]}.
+          {selectedUser.first_name} {selectedUser.last_name}
           <br />
           {getWeekHeader()}
         </h1>
@@ -172,7 +188,7 @@ const ViewSchedule = () => {
                   <p>OFF</p>
                 )}
                 <small>{locale[day.location]}</small>
-
+                {day.note && <p>{day.note}</p>}
                 {activeIndex === index && (
                   <>
                     <textarea

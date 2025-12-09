@@ -4,11 +4,13 @@ import { getUser } from "../../utils/API";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { text } from "@fortawesome/fontawesome-svg-core";
+import { useAuth } from "../../context/AuthContext";
 
 const UserProfile = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [user, setUser] = useState({});
+  const [selectedUser, setSelectedUser] = useState({});
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -33,7 +35,7 @@ const UserProfile = () => {
         toast.error(response.message);
         return;
       }
-      setUser(response.user);
+      setSelectedUser(response.user);
       setFormData({
         first_name: response.user.first_name,
         last_name: response.user.last_name,
@@ -85,6 +87,14 @@ const UserProfile = () => {
   return (
     <form className={styles.userProfileBlock} onSubmit={handleSubmit}>
       <div className={styles.userButtonBlock}>
+        {user.role === "admin" && (
+          <button
+            type="button"
+            onClick={() => navigate(`/view-schedule/${selectedUser.id}`)}
+          >
+            View {selectedUser.first_name}'s schedule
+          </button>
+        )}
         <button type="button" onClick={() => setEditing(!editing)}>
           {editing ? "Cancel" : "Edit User"}
         </button>

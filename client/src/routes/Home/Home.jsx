@@ -17,7 +17,7 @@ const Home = () => {
             </Link>
           </>
         )}
-        <Link to={"/view-schedule"}>View Schedule</Link>
+        <Link to={`/view-schedule/${user.id}`}>View Schedule</Link>
         <Link to={"/time-off-request"}>Time Off Request</Link>
       </div>
     </div>

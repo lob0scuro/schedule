@@ -26,7 +26,7 @@ const App = () => {
         <Route element={<ProtectedLayout />}>
           <Route index element={<Home />} />
           <Route path="time-off-request" element={<TimeOffRequest />} />
-          <Route path="view-schedule" element={<ViewSchedule />} />
+          <Route path="view-schedule/:id" element={<ViewSchedule />} />
           <Route element={<AdminLayout />}>
             <Route path="scheduler" element={<Scheduler />} />
             <Route path="user/:id" element={<UserProfile />} />
