@@ -133,7 +133,7 @@ export const convertTime = (time) => {
   const ampm = hour >= 12 ? "PM" : "AM";
   hour = hour % 12 || 12;
 
-  return `${hour}:${minute} ${ampm}`;
+  return `${hour}:${minute}${ampm}`;
 };
 
 export const convertDate = (date_str) => {

@@ -1,0 +1,96 @@
+.settingContainer {
+  width: 80%;
+  max-width: 1200px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.settingContainer > div {
+  flex: 1;
+}
+
+.shiftSettings {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid var(--linkText);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.shiftSettings > .shiftItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background-color: var(--linkText);
+  color: #fefefe;
+  width: 80%;
+  padding: 1rem 10px;
+  border-radius: 8px;
+}
+.shiftSettings > .shiftItem:hover {
+  background-color: var(--primary);
+}
+
+.userSettings {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.userSettings > .userItem {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background-color: var(--primary);
+  color: #fefefe;
+  width: 80%;
+  padding: 1rem 10px;
+  border-radius: 8px;
+}
+
+.userSettings > .userItem:hover {
+  background-color: var(--linkText);
+}
+
+button.addem {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  box-shadow: inset -1px -1px 3px #333, inset 1px 1px 4px #222;
+}
+button.addem:hover {
+  background-color: var(--primary);
+  color: #fefefe;
+  box-shadow: -1px 1px 4px #000;
+}
+
+button.deleteItemButton {
+  background-color: transparent;
+  color: darkred;
+  font-size: 2rem;
+  border: none;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+button.deleteItemButton:hover {
+  color: red;
+  font-size: 2.4rem;
+}

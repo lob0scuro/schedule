@@ -8,6 +8,7 @@ import {
   convertDate,
   convertTime,
   WEEKDAY,
+  locationAbbr,
 } from "../../../utils/Helpers";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -39,41 +40,30 @@ const ViewSchedule = () => {
   const today = new Date();
   const { user } = useAuth();
   const { id } = useParams();
-  const [selectedUser, setSelectedUser] = useState({});
   const [currentWeek, setCurrentWeek] = useState(getWorkWeekFromDate(today));
+  const [selectedUser, setSelectedUser] = useState({});
   const [schedule, setSchedule] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
   const [content, setContent] = useState("");
-
-  useEffect(() => {
-    const getUser = async () => {
-      const res = await fetch(`/api/read/user/${id}`);
-      const data = await res.json();
-      if (!data.success) {
-        toast.error(data.message);
-        return;
-      }
-      setSelectedUser(data.user);
-    };
-    getUser();
-  }, [id]);
 
   useEffect(() => {
     const start = formatDate(currentWeek[0]);
     const end = formatDate(currentWeek[currentWeek.length - 1]);
     const scheduleGet = async () => {
       const res = await fetch(
-        `/api/read/schedule_week/${selectedUser.id}?start_date=${start}&end_date=${end}`
+        `/api/read/user_schedule/${id}?start_date=${start}&end_date=${end}`
       );
       const data = await res.json();
       if (!data.success) {
         toast.error(data.message);
       }
+      setSelectedUser(data.user);
       setSchedule(data.schedule);
     };
     scheduleGet();
   }, [id, user, currentWeek, activeIndex]);
 
+  // FORMATTING
   const getWeekHeader = () => {
     const start = currentWeek[0];
     const end = currentWeek[currentWeek.length - 1];
@@ -82,6 +72,21 @@ const ViewSchedule = () => {
     return startMonth === endMonth
       ? `${startMonth} ${start.getDate()} - ${end.getDate()}`
       : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}`;
+  };
+
+  //WEEK DAY LABEL
+  const getWeekdayHeader = (shiftDateStr) => {
+    const dateObj = new Date(shiftDateStr);
+    const index = currentWeek.findIndex(
+      (d) =>
+        d.getFullYear() === dateObj.getFullYear() &&
+        d.getMonth() === dateObj.getMonth() &&
+        d.getDate() === dateObj.getDate()
+    );
+
+    if (index === -1) return "";
+
+    return WEEKDAY[index + 1];
   };
 
   // Helper: Build Mon-Sat week from a Monday
@@ -115,8 +120,11 @@ const ViewSchedule = () => {
   };
 
   const handleNote = async (id) => {
+    if (content.trim() === "") {
+      toast.error("Content is required");
+      return;
+    }
     if (!confirm("Add note to shift?")) return;
-
     try {
       const response = await fetch(`/api/create/schedule_note/${id}`, {
         method: "POST",
@@ -161,54 +169,50 @@ const ViewSchedule = () => {
       </div>
       {schedule.length !== 0 ? (
         <div className={styles.userScheduleView}>
-          {schedule.map((day, index) => (
-            <div key={index} className={styles.weekdayItem}>
-              <div className={styles.weekdayHeader}>
-                <span>
-                  {WEEKDAY[index + 1]} {convertDate(day.shift_date)}
-                </span>
-                {user.role === "admin" && (
-                  <FontAwesomeIcon
-                    icon={faNoteSticky}
-                    onClick={() =>
-                      activeIndex === index
-                        ? setActiveIndex(null)
-                        : setActiveIndex(index)
-                    }
-                  />
-                )}
-              </div>
-              <div className={styles.weekdayBody}>
-                {day.shift.start_time !== null ? (
+          {schedule.map(
+            (
+              { id, user_id, shift_id, shift_date, location, shift, note },
+              index
+            ) => (
+              <div className={styles.shiftDay}>
+                <div className={styles.shiftDayHeader}>
+                  <h3>
+                    {getWeekdayHeader(shift_date)} <br />{" "}
+                    <span>{convertDate(shift_date)}</span>
+                  </h3>
+                  {user.role === "admin" && (
+                    <FontAwesomeIcon
+                      icon={faNoteSticky}
+                      onClick={() =>
+                        setActiveIndex(activeIndex === index ? null : index)
+                      }
+                    />
+                  )}
+                </div>
+                <div className={styles.shiftDayBody}>
                   <p>
-                    {convertTime(day.shift.start_time)} -{" "}
-                    {convertTime(day.shift.end_time)}
+                    <span>{convertTime(shift.start_time)}</span> -{""}
+                    <span>{convertTime(shift.end_time)}</span>
                   </p>
-                ) : (
-                  <p>OFF</p>
-                )}
-                <small>{locale[day.location]}</small>
-                {day.note && <p>{day.note}</p>}
+                  <p className={styles.locationTag}>{locale[location]}</p>
+                  {note && <p className={styles.shiftNote}>{note}</p>}
+                </div>
                 {activeIndex === index && (
-                  <>
+                  <div className={styles.shiftDayNoteForm}>
                     <textarea
                       name="content"
                       id="content"
                       value={content}
-                      className={styles.contentForm}
                       onChange={(e) => setContent(e.target.value)}
                     ></textarea>
-                    <button
-                      className={styles.submitContentButton}
-                      onClick={() => handleNote(day.id)}
-                    >
+                    <button type="button" onClick={() => handleNote(id)}>
                       Submit
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       ) : (
         <div className={styles.noSchedule}>

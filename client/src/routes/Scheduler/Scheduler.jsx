@@ -381,15 +381,18 @@ const Scheduler = () => {
               />
               <label htmlFor="jennings">Jennings</label>
             </div>
-            {shifts?.map(({ id, title, start_time, end_time }) => (
-              <button
-                key={id}
-                onClick={() => setSelectedShift(selectedShift === id ? "" : id)}
-                className={selectedShift === id ? styles.selectedShift : ""}
-              >
-                {title}
-              </button>
-            ))}
+            <select
+              name="shift"
+              value={selectedShift}
+              onChange={(e) => setSelectedShift(Number(e.target.value))}
+            >
+              <option value="">--select shift--</option>
+              {shifts?.map(({ id, title, start_time, end_time }) => (
+                <option value={id} key={id}>
+                  {title}
+                </option>
+              ))}
+            </select>
             <button
               className={styles.deleteShiftButton}
               onClick={ClearWeek}

@@ -43,6 +43,13 @@ class User(db.Model, UserMixin):
     availability = relationship("Availability", backref="user", lazy=True)
     time_off_requests = relationship("TimeOffRequest", backref="user", lazy=True)
     
+    def current_weeks_schedule(self, start, end):
+        schedules = Schedule.query.filter(
+            Schedule.user_id == self.id,
+            Schedule.shift_date.between(start, end)
+        ).order_by(Schedule.shift_date.asc()).all()
+        return [s.serialize() for s in schedules]
+    
     def serialize_basic(self):
         return {
            "id": self.id,

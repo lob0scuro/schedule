@@ -102,6 +102,24 @@ def schedule_week(id):
     
     
     return jsonify(success=True, schedule=[s.serialize() for s in schedule]), 200
+
+@reader.route("/user_schedule/<int:id>", methods=["GET"])
+@login_required
+def get_user_schedule(id):
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+    user = User.query.get(id)
+    if not user:
+        return jsonify(success=False, message="User not found"), 404
+    
+    try:
+        start = date.fromisoformat(start_date)
+        end = date.fromisoformat(end_date)
+    except ValueError:
+        return jsonify(success=False, message="Invalid date format. Use YYYY-MM-DD"), 400
+    schedule = user.current_weeks_schedule(start, end)
+    
+    return jsonify(success=True, user=user.serialize(), schedule=schedule), 200
     
     
 
