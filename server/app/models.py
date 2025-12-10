@@ -188,6 +188,7 @@ class TimeOffRequest(db.Model):
             "reason": self.reason,
             "status": self.status.value,
             "user": {
+                "id": self.user.id,
                 "first_name": self.user.first_name,
                 "last_name": self.user.last_name,
                 "department": self.user.department.value,

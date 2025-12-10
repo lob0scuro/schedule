@@ -1,7 +1,11 @@
 import toast from "react-hot-toast";
 import styles from "./TimeOffStatus.module.css";
 import React, { useEffect, useState } from "react";
-import { convertDate, getDatesInRange } from "../../../utils/Helpers";
+import {
+  convertDate,
+  formatDate,
+  getDatesInRange,
+} from "../../../utils/Helpers";
 
 const TimeOffStatus = () => {
   const [ro, setRo] = useState({
@@ -99,10 +103,11 @@ const TimeOffStatus = () => {
     const dates = getDatesInRange(startDate, endDate);
 
     for (const d of dates) {
+      const iso = formatDate(new Date(d));
       if (create) {
-        await createOffSchedule(userID, d);
+        await createOffSchedule(userID, iso);
       } else {
-        await deleteOffSchedule(userID, d);
+        await deleteOffSchedule(userID, iso);
       }
     }
   };
