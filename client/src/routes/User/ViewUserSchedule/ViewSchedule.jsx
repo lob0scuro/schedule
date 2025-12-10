@@ -9,6 +9,7 @@ import {
   convertTime,
   WEEKDAY,
   locationAbbr,
+  parseLocalDate,
 } from "../../../utils/Helpers";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -76,7 +77,8 @@ const ViewSchedule = () => {
 
   //WEEK DAY LABEL
   const getWeekdayHeader = (shiftDateStr) => {
-    const dateObj = new Date(shiftDateStr);
+    const dateObj = parseLocalDate(shiftDateStr);
+
     const index = currentWeek.findIndex(
       (d) =>
         d.getFullYear() === dateObj.getFullYear() &&
@@ -86,7 +88,7 @@ const ViewSchedule = () => {
 
     if (index === -1) return "";
 
-    return WEEKDAY[index + 1];
+    return WEEKDAY[index];
   };
 
   // Helper: Build Mon-Sat week from a Monday
@@ -94,7 +96,7 @@ const ViewSchedule = () => {
     const week = [];
     for (let i = 0; i < 6; i++) {
       const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
+      d.setDate(d.getDate() + i);
       week.push(d);
     }
     return week;

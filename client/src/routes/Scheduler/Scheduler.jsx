@@ -3,7 +3,6 @@ import React, { use, useEffect, useMemo, useState } from "react";
 import {
   MONTH_NAMES,
   WEEKDAY,
-  changeMonth,
   convertDate,
   convertTime,
   convertToMilitary,
@@ -429,7 +428,7 @@ const Scheduler = () => {
                 styles.gridHeader,
               ])}
             >
-              <span>{WEEKDAY[day.getDay()]}</span>
+              <span>{WEEKDAY[day.getDay() - 1]}</span>
               <span>
                 {MONTH_NAMES[day.getMonth()]}{" "}
                 {day.getDate() + suffix(day.getDate())}
@@ -512,7 +511,7 @@ const Scheduler = () => {
                   }}
                 >
                   <small className={styles.mobileDateRead}>
-                    {WEEKDAY[cellIndex + 1]}
+                    {WEEKDAY[cellIndex]}
                   </small>
                   {cell.is_time_off ? (
                     <FontAwesomeIcon icon={faNotdef} />

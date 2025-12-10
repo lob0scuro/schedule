@@ -66,7 +66,7 @@ const RegisterForm = ({ bool }) => {
     <div
       className={bool ? styles.importUserForm : styles.registerFormMasterBlock}
     >
-      <h2>Registration</h2>
+      <h2>Register New User</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="role">Role</label>

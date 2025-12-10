@@ -98,6 +98,11 @@
   margin-top: 1rem;
 }
 
+.shiftDayBody p span:hover {
+  background-color: transparent;
+  color: var(--primary);
+}
+
 .shiftNote {
   color: var(--linkText);
   padding: 4px 10px;

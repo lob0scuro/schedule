@@ -1,13 +1,6 @@
-import EMPLOYEES from "../assets/employees.json";
-
-export const CLEANERS = EMPLOYEES.cleaner;
-export const FRIDGE_TECHS = EMPLOYEES.technician.fridges;
-export const WASHER_TECHS = EMPLOYEES.technician.washers;
-export const DRYER_RANGE_TECHS = EMPLOYEES.technician["dryers-ranges"];
-export const SALES = EMPLOYEES.sales;
-export const SERVICE = EMPLOYEES.service;
-export const OFFICE = EMPLOYEES.other;
-
+///////////
+//SCHEMAS//
+///////////
 export const MONTH_NAMES = [
   "January",
   "Febuary",
@@ -24,7 +17,6 @@ export const MONTH_NAMES = [
 ];
 
 export const WEEKDAY = [
-  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
@@ -47,47 +39,11 @@ export const suffix = (n) => {
   }
 };
 
-export const getCalendarDays = (year, month) => {
-  const numberOfDays = new Date(year, month + 1, 0).getDate();
-  const firstDayIndex = new Date(year, month, 1).getDay();
-
-  const days = [];
-
-  for (let i = 0; i < firstDayIndex; i++) {
-    days.push(null);
-  }
-  for (let i = 1; i <= numberOfDays; i++) {
-    days.push(new Date(year, month, i));
-  }
-
-  return days;
-};
-
-export const changeMonth = (
-  offset,
-  setCurrentMonth,
-  setCurrentYear,
-  currentYear
-) => {
-  setCurrentMonth((prev) => {
-    let newMonth = prev + offset;
-    let newYear = currentYear;
-
-    if (newMonth < 0) {
-      newMonth = 11;
-      newYear--;
-    } else if (newMonth > 11) {
-      newMonth = 0;
-      newYear++;
-    }
-
-    setCurrentYear(newYear);
-    return newMonth;
-  });
-};
-
+///////////////
+//Build weeks//
+//////////////
 export const getWorkWeekFromDate = (date) => {
-  let d = new Date(date);
+  let d = typeof date === "string" ? parseLocalDate(date) : new Date(date);
 
   // Sunday ? treat it as next day (monday)
   if (d.getDay() === 0) {
@@ -110,6 +66,9 @@ export const getWorkWeekFromDate = (date) => {
   return week;
 };
 
+///////////////////
+//DATE OPERATIONS//
+///////////////////
 export const getDatesInRange = (start, end) => {
   const dates = [];
   let current = new Date(start);
@@ -123,6 +82,26 @@ export const getDatesInRange = (start, end) => {
   return dates;
 };
 
+export const convertDate = (date_str) => {
+  const [year, month, day] = date_str.split("-");
+  return `${MONTH_NAMES[Number(month) - 1]} ${day + suffix(day)}, ${year}`;
+};
+
+export const formatDate = (date) => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
+export const parseLocalDate = (dateStr) => {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+///////////////////
+//TIME OPERATIONS//
+//////////////////
 export const convertTime = (time) => {
   if (time === null) return "OFF";
   if (time === "OFF") return time;
@@ -134,18 +113,6 @@ export const convertTime = (time) => {
   hour = hour % 12 || 12;
 
   return `${hour}:${minute}${ampm}`;
-};
-
-export const convertDate = (date_str) => {
-  const [year, month, day] = date_str.split("-");
-  return `${MONTH_NAMES[Number(month) - 1]} ${day + suffix(day)}, ${year}`;
-};
-
-export const formatDate = (date) => {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}-${String(date.getDate()).padStart(2, "0")}`;
 };
 
 export const convertToMilitary = (input) => {
@@ -175,4 +142,7 @@ export const convertToMilitary = (input) => {
   );
 };
 
+/////////
+//MISC//
+////////
 export const locationAbbr = (loc) => (loc === "lake_charles" ? "LC" : "JN");

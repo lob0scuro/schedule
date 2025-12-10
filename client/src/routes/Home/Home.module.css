@@ -46,3 +46,20 @@
   grid-column-start: 1;
   grid-column-end: 3;
 }
+
+@media screen and (max-width: 600px) {
+  .navLinks {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-block: 2rem;
+    gap: 3rem;
+  }
+
+  .navLinks a {
+    height: 4rem;
+    width: 80%;
+    min-height: 6rem;
+  }
+}

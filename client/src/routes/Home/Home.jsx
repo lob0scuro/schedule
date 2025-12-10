@@ -1,4 +1,3 @@
-import Calendar from "../../components/Calendar/Calendar";
 import styles from "./Home.module.css";
 import React from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -18,7 +17,7 @@ const Home = () => {
     <div className={styles.homeContainer}>
       <div className={styles.navLinks}>
         <Link to={`/view-schedule/${user.id}`}>
-          <FontAwesomeIcon icon={faCalendarDay} /> View Schedule
+          <FontAwesomeIcon icon={faCalendarDay} /> My Schedule
         </Link>
         <Link to={"/time-off-request"}>
           <FontAwesomeIcon icon={faUserClock} />

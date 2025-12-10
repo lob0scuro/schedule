@@ -96,7 +96,7 @@ const Settings = () => {
           value={department}
           onChange={(e) => setDepartment(e.target.value)}
         >
-          <option value="">--select department--</option>
+          <option value="all">--all departments--</option>
           {["cleaner", "technician", "service", "sales", "office"].map(
             (item, index) => (
               <option value={item} key={index}>
